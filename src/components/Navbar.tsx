@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin, Phone, Info, Building2, Briefcase, Crown, Pill } from 'lucide-react';
+import { Menu, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin, Phone, Info, Building2, Briefcase, Crown, Pill, ArrowRight, type LucideIcon } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageToggle } from './LanguageToggle';
@@ -10,22 +10,52 @@ import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-const navItems = [
+interface DropdownItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  description?: string;
+}
+
+interface NavItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  hasDropdown?: boolean;
+  dropdownItems?: DropdownItem[];
+  megaMenu?: boolean;
+}
+
+const navItems: NavItem[] = [
   { name: 'Home', href: '/', icon: Home },
-  { name: 'About', href: '#', icon: Info, hasDropdown: true, dropdownItems: [
-    { name: 'About NHIS', href: '/about', icon: Info },
-    { name: 'The Authority (NHIA)', href: '/nhia', icon: Building2 },
-    { name: 'Management', href: '/management', icon: Briefcase },
-    { name: 'Governing Board', href: '/board', icon: Crown },
-  ]},
+  { 
+    name: 'About', 
+    href: '#', 
+    icon: Info, 
+    hasDropdown: true, 
+    megaMenu: true,
+    dropdownItems: [
+      { name: 'About NHIS', href: '/about', icon: Info, description: 'Learn about Ghana\'s National Health Insurance Scheme' },
+      { name: 'The Authority (NHIA)', href: '/nhia', icon: Building2, description: 'Discover the regulatory body behind NHIS' },
+      { name: 'Management', href: '/management', icon: Briefcase, description: 'Meet our leadership team and executives' },
+      { name: 'Governing Board', href: '/board', icon: Crown, description: 'View the board members guiding NHIS' },
+    ]
+  },
   { name: 'Membership', href: '/membership', icon: Users },
-  { name: 'Services', href: '#', icon: FileText, hasDropdown: true, dropdownItems: [
-    { name: 'Claims Payment', href: '/claims-payment', icon: CreditCard },
-    { name: 'Providers', href: '/providers', icon: Hospital },
-    { name: 'Credentialing', href: '/credentialing', icon: Award },
-    { name: 'Private Insurance', href: '/private-insurance', icon: Shield },
-    { name: 'Medicines List', href: '/medlist', icon: Pill },
-  ]},
+  { 
+    name: 'Services', 
+    href: '#', 
+    icon: FileText, 
+    hasDropdown: true, 
+    megaMenu: true,
+    dropdownItems: [
+      { name: 'Claims Payment', href: '/claims-payment', icon: CreditCard, description: 'Submit and track your healthcare claims' },
+      { name: 'Providers', href: '/providers', icon: Hospital, description: 'Find accredited healthcare providers' },
+      { name: 'Credentialing', href: '/credentialing', icon: Award, description: 'Provider accreditation and certification' },
+      { name: 'Private Insurance', href: '/private-insurance', icon: Shield, description: 'Private health insurance options' },
+      { name: 'Medicines List', href: '/medlist', icon: Pill, description: 'View covered medicines and drugs' },
+    ]
+  },
   { name: 'Facilities', href: '/facilities', icon: MapPin },
   { name: 'FAQs', href: '/faqs', icon: HelpCircle },
   { name: 'Downloads', href: '/downloads', icon: Download },
@@ -153,51 +183,85 @@ export const Navbar = () => {
 
             {/* Desktop Navigation - Full Width Centered */}
             <div className="hidden lg:flex items-center justify-center flex-1 px-2">
-              <div className="flex items-center justify-center gap-1 w-full">
+              <div className="flex items-center justify-center gap-0.5 w-full">
                 {navItems.map((item) => (
                   <div key={item.name} className="relative">
                     {item.hasDropdown ? (
                       <div
-                        className="relative group"
+                        className="relative"
                         onMouseEnter={() => setOpenDropdown(item.name)}
                         onMouseLeave={() => setOpenDropdown(null)}
                       >
                         <button className={cn(
-                          "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap",
+                          "group relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap",
                           openDropdown === item.name
-                            ? "text-primary bg-primary/10"
-                            : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                            ? "text-primary"
+                            : "text-foreground/80 hover:text-primary"
                         )}>
                           <item.icon className="w-4 h-4 shrink-0" />
                           <span>{item.name}</span>
-                          <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", openDropdown === item.name && "rotate-180")} />
+                          <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-300", openDropdown === item.name && "rotate-180")} />
+                          {/* Underline animation */}
+                          <span className={cn(
+                            "absolute bottom-0.5 left-3 right-3 h-0.5 bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow rounded-full transition-transform duration-300 origin-left",
+                            openDropdown === item.name ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                          )} />
                         </button>
+                        
+                        {/* Mega Menu Dropdown */}
                         <AnimatePresence>
-                          {openDropdown === item.name && (
+                          {openDropdown === item.name && item.megaMenu && (
                             <motion.div
-                              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                              initial={{ opacity: 0, y: 10, scale: 0.95 }}
                               animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                              transition={{ duration: 0.15 }}
-                              className="absolute top-full left-0 mt-2 w-56 z-[100] bg-background dark:bg-card rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-border"
+                              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                              className="absolute top-full left-1/2 -translate-x-1/2 mt-3 z-[100] min-w-[480px] bg-background dark:bg-card rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-border overflow-hidden"
                             >
-                              <div className="py-1">
-                                {item.dropdownItems?.map((dropItem) => (
-                                  <Link
-                                    key={dropItem.name}
-                                    to={dropItem.href}
-                                    onClick={() => setOpenDropdown(null)}
-                                    className={cn(
-                                      "flex items-center gap-3 px-4 py-3 text-sm transition-all",
-                                      isActive(dropItem.href) 
-                                        ? "text-primary bg-primary/10 font-medium" 
-                                        : "text-foreground hover:text-primary hover:bg-muted"
-                                    )}
-                                  >
-                                    <dropItem.icon className="w-4 h-4 shrink-0" />
-                                    <span>{dropItem.name}</span>
-                                  </Link>
-                                ))}
+                              {/* Gradient top border */}
+                              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow" />
+                              
+                              <div className="p-4">
+                                <div className="grid grid-cols-2 gap-2">
+                                  {item.dropdownItems?.map((dropItem, idx) => (
+                                    <Link
+                                      key={dropItem.name}
+                                      to={dropItem.href}
+                                      onClick={() => setOpenDropdown(null)}
+                                      className="group/item relative flex items-start gap-3 p-3 rounded-xl transition-all duration-300 hover:bg-primary/5"
+                                    >
+                                      <motion.div 
+                                        initial={{ scale: 0.9, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                        className={cn(
+                                          "shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
+                                          isActive(dropItem.href) 
+                                            ? "bg-primary text-primary-foreground" 
+                                            : "bg-muted group-hover/item:bg-primary/10 group-hover/item:text-primary"
+                                        )}
+                                      >
+                                        <dropItem.icon className="w-5 h-5" />
+                                      </motion.div>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-1">
+                                          <span className={cn(
+                                            "font-medium text-sm transition-colors",
+                                            isActive(dropItem.href) ? "text-primary" : "text-foreground group-hover/item:text-primary"
+                                          )}>
+                                            {dropItem.name}
+                                          </span>
+                                          <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300 text-primary" />
+                                        </div>
+                                        {dropItem.description && (
+                                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                                            {dropItem.description}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </Link>
+                                  ))}
+                                </div>
                               </div>
                             </motion.div>
                           )}
@@ -207,14 +271,19 @@ export const Navbar = () => {
                       <Link
                         to={item.href}
                         className={cn(
-                          "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap",
+                          "group relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap",
                           isActive(item.href) 
-                            ? "text-primary bg-primary/10" 
-                            : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                            ? "text-primary" 
+                            : "text-foreground/80 hover:text-primary"
                         )}
                       >
                         <item.icon className="w-4 h-4 shrink-0" />
                         <span>{item.name}</span>
+                        {/* Underline animation */}
+                        <span className={cn(
+                          "absolute bottom-0.5 left-3 right-3 h-0.5 bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow rounded-full transition-transform duration-300 origin-left",
+                          isActive(item.href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                        )} />
                       </Link>
                     )}
                   </div>
