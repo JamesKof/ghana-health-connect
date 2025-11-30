@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 
 interface FloatingWhatsAppProps {
   phoneNumber?: string;
@@ -8,7 +8,7 @@ interface FloatingWhatsAppProps {
 }
 
 export const FloatingWhatsApp = ({ 
-  phoneNumber = "+233000000000", 
+  phoneNumber = "+233544446447", 
   message = "Hello! I have a question about NHIS." 
 }: FloatingWhatsAppProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -36,6 +36,7 @@ export const FloatingWhatsApp = ({
             className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white rounded-xl shadow-card px-4 py-2 whitespace-nowrap"
           >
             <p className="text-sm font-medium text-foreground">Chat with us on WhatsApp</p>
+            <p className="text-xs text-muted-foreground">054 444 6447</p>
             <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rotate-45 w-2 h-2 bg-white" />
           </motion.div>
         )}
