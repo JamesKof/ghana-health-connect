@@ -71,7 +71,7 @@ export const Navbar = () => {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <NHISLogo className="h-10 md:h-12" showText={true} />
+              <NHISLogo className="h-10 md:h-12" showText={false} />
             </Link>
 
             {/* Desktop Navigation */}
