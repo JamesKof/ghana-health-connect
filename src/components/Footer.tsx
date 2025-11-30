@@ -1,34 +1,33 @@
-import { motion } from 'framer-motion';
 import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
-import nhisLogo from '@/assets/nhis-logo.png';
+import { NHISLogo } from './NHISLogo';
 
 const quickLinks = [
   { name: 'About NHIS', href: '#about' },
-  { name: 'Membership', href: '#membership' },
+  { name: 'Membership', href: '#membership-detail' },
   { name: 'Benefits', href: '#benefits' },
   { name: 'Registration', href: '#registration' },
-  { name: 'FAQs', href: 'https://www.nhis.gov.gh/faqs' },
+  { name: 'FAQs', href: '#faqs' },
 ];
 
 const services = [
-  { name: 'Claims Payment', href: 'https://www.nhis.gov.gh/payments' },
-  { name: 'Credentialing', href: 'https://www.nhis.gov.gh/credentialing' },
-  { name: 'Providers Portal', href: 'https://www.nhis.gov.gh/providers' },
-  { name: 'Medicines List', href: 'https://www.nhis.gov.gh/medlist' },
-  { name: 'Downloads', href: 'https://www.nhis.gov.gh/downloads' },
+  { name: 'Claims Payment', href: '#claims-payment' },
+  { name: 'Credentialing', href: '#credentialing' },
+  { name: 'Providers', href: '#providers' },
+  { name: 'Private Insurance', href: '#private-health-insurance' },
+  { name: 'Downloads', href: '#downloads' },
 ];
 
 const externalLinks = [
   { name: 'Ministry of Health', href: 'https://www.moh.gov.gh' },
   { name: 'Ghana Health Service', href: 'https://www.ghs.gov.gh' },
-  { name: 'MyNHIS App', href: '#' },
+  { name: 'MyNHIS App', href: 'https://play.google.com/store/apps/details?id=com.lolosoft.android.mynthis' },
   { name: 'Government of Ghana', href: 'https://www.ghana.gov.gh' },
 ];
 
 const socialLinks = [
   { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/nhishg' },
   { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/NHIS_GHANA' },
-  { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/nhis_ghana' },
+  { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/nhisghana_gov' },
   { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/channel/UC1LlFtmEswsRRCvQZ6DTbBA' },
 ];
 
@@ -40,12 +39,8 @@ export const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-6">
-              <img src={nhisLogo} alt="NHIS Ghana" className="h-12 w-auto brightness-0 invert" />
-              <div>
-                <p className="font-display font-semibold text-white">NHIS Ghana</p>
-                <p className="text-white/60 text-xs">National Health Insurance</p>
-              </div>
+            <div className="mb-6">
+              <NHISLogo className="h-12" inverted showText />
             </div>
             <p className="text-white/70 text-sm leading-relaxed mb-6">
               The National Health Insurance Scheme provides financial access to quality healthcare 
@@ -94,12 +89,9 @@ export const Footer = () => {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="text-white/70 hover:text-white transition-colors text-sm inline-flex items-center gap-1"
                   >
                     {link.name}
-                    <ExternalLink className="w-3 h-3" />
                   </a>
                 </li>
               ))}
