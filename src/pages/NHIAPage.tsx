@@ -1,8 +1,9 @@
 import { PageLayout } from '@/components/PageLayout';
 import { motion } from 'framer-motion';
-import { Building2, Target, Eye, CheckCircle2, Scale, Shield, Users, FileText } from 'lucide-react';
+import { Building2, Target, Eye, CheckCircle2, Scale, Shield, Users, FileText, Network } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { OrgChart } from '@/components/OrgChart';
 
 const functions = [
   'Implement, operate and manage the National Health Insurance Scheme',
@@ -172,8 +173,35 @@ const NHIAPage = () => {
         </div>
       </section>
 
-      {/* Functions of the Authority */}
+      {/* Organizational Structure */}
       <section className="py-16 bg-background">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              <Network className="w-4 h-4" />
+              Organizational Structure
+            </div>
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+              NHIA Leadership Hierarchy
+            </h2>
+            <p className="text-muted-foreground mt-2 max-w-3xl mx-auto">
+              The Authority is governed by a Board and managed by a Chief Executive supported by three Deputy Chief Executives overseeing Administration & HR, Operations, and Finance & Investment.
+            </p>
+          </motion.div>
+
+          <Card className="p-6 md:p-8 border-border/50 bg-card/50 backdrop-blur-sm">
+            <OrgChart />
+          </Card>
+        </div>
+      </section>
+
+      {/* Functions of the Authority */}
+      <section className="py-16 bg-muted/30">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
