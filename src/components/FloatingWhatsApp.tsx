@@ -13,11 +13,7 @@ export const FloatingWhatsApp = ({
 }: FloatingWhatsAppProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleClick = () => {
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
-  };
+  const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
 
   return (
     <motion.div
@@ -33,18 +29,20 @@ export const FloatingWhatsApp = ({
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
-            className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white rounded-xl shadow-card px-4 py-2 whitespace-nowrap"
+            className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white dark:bg-card rounded-xl shadow-card px-4 py-2 whitespace-nowrap"
           >
             <p className="text-sm font-medium text-foreground">Chat with us on WhatsApp</p>
             <p className="text-xs text-muted-foreground">054 444 6447</p>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rotate-45 w-2 h-2 bg-white" />
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rotate-45 w-2 h-2 bg-white dark:bg-card" />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Button */}
-      <motion.button
-        onClick={handleClick}
+      {/* Button - Using anchor tag to avoid popup blockers */}
+      <motion.a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className="relative w-14 h-14 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20BA5C] transition-colors"
@@ -54,7 +52,7 @@ export const FloatingWhatsApp = ({
         {/* Pulse animation */}
         <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-25" />
         <MessageCircle className="w-7 h-7 relative z-10" />
-      </motion.button>
+      </motion.a>
     </motion.div>
   );
 };
