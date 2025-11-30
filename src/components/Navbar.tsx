@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin } from 'lucide-react';
+import { Menu, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin, Phone, X } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageToggle } from './LanguageToggle';
 import { SearchDialog } from './SearchDialog';
 import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const navItems = [
   { name: 'Home', href: '/', icon: Home },
@@ -23,11 +25,17 @@ const navItems = [
   { name: 'Contact', href: '/contact', icon: Mail },
 ];
 
+const quickActions = [
+  { name: 'Member Portal', href: '/member-portal', icon: UserCircle, variant: 'secondary' as const },
+  { name: 'USSD: *929#', href: 'tel:*929#', icon: Phone, variant: 'outline' as const },
+];
+
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -39,7 +47,7 @@ export const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    setMobileMenuOpen(false);
   }, [location]);
 
   const isActive = (href: string) => {
@@ -126,8 +134,8 @@ export const Navbar = () => {
               ))}
             </div>
 
-            {/* Right Side */}
-            <div className="hidden md:flex items-center gap-2">
+            {/* Right Side - Desktop */}
+            <div className="hidden lg:flex items-center gap-2">
               <button
                 onClick={() => setSearchOpen(true)}
                 className="p-2 rounded-xl hover:bg-primary/5 transition-colors text-foreground/80 hover:text-primary"
@@ -152,7 +160,7 @@ export const Navbar = () => {
               </Link>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile/Tablet Menu */}
             <div className="flex items-center gap-1 lg:hidden">
               <button
                 onClick={() => setSearchOpen(true)}
@@ -163,96 +171,155 @@ export const Navbar = () => {
               </button>
               <LanguageToggle />
               <ThemeToggle />
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-xl hover:bg-primary/5 transition-colors"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
+              
+              {/* Hamburger Menu Sheet */}
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <button
+                    className="p-2 rounded-xl hover:bg-primary/5 transition-colors"
+                    aria-label="Open menu"
+                  >
+                    <Menu className="w-6 h-6" />
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 overflow-y-auto">
+                  <SheetHeader className="p-4 border-b border-border/50">
+                    <div className="flex items-center justify-between">
+                      <SheetTitle className="flex items-center gap-2">
+                        <NHISLogo className="h-8" showText={false} />
+                        <span className="font-display font-bold text-primary">NHIS</span>
+                      </SheetTitle>
+                    </div>
+                  </SheetHeader>
+                  
+                  <div className="p-4 space-y-1">
+                    {/* Quick Actions */}
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      <Link
+                        to="/membership"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-primary text-primary-foreground font-medium text-sm"
+                      >
+                        Get Started
+                      </Link>
+                      <Link
+                        to="/member-portal"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-primary/10 text-primary font-medium text-sm"
+                      >
+                        <UserCircle className="w-4 h-4" />
+                        Portal
+                      </Link>
+                    </div>
+
+                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 py-2">
+                      Menu
+                    </div>
+
+                    {/* Navigation Items */}
+                    {navItems.map((item) => (
+                      <div key={item.name}>
+                        {item.hasDropdown ? (
+                          <Collapsible
+                            open={expandedItem === item.name}
+                            onOpenChange={(open) => setExpandedItem(open ? item.name : null)}
+                          >
+                            <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-3 rounded-xl text-foreground/80 hover:bg-primary/5 transition-all">
+                              <div className="flex items-center gap-3">
+                                <item.icon className="w-5 h-5" />
+                                <span className="font-medium">{item.name}</span>
+                              </div>
+                              <ChevronDown className={cn(
+                                "w-4 h-4 transition-transform duration-200",
+                                expandedItem === item.name && "rotate-180"
+                              )} />
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <div className="ml-4 pl-4 border-l-2 border-border/50 space-y-1 py-1">
+                                {item.dropdownItems?.map((dropItem) => (
+                                  <Link
+                                    key={dropItem.name}
+                                    to={dropItem.href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                      "flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition-all",
+                                      isActive(dropItem.href) 
+                                        ? "text-primary bg-primary/10 font-medium" 
+                                        : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+                                    )}
+                                  >
+                                    <dropItem.icon className="w-4 h-4" />
+                                    {dropItem.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        ) : (
+                          <Link
+                            to={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={cn(
+                              "flex items-center gap-3 px-3 py-3 rounded-xl transition-all",
+                              isActive(item.href) 
+                                ? "text-primary bg-primary/10 font-medium" 
+                                : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                            )}
+                          >
+                            <item.icon className="w-5 h-5" />
+                            <span className="font-medium">{item.name}</span>
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+
+                    {/* Quick Access Section */}
+                    <div className="pt-4 mt-4 border-t border-border/50">
+                      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 py-2">
+                        Quick Access
+                      </div>
+                      
+                      {/* USSD Card */}
+                      <div className="bg-gradient-to-br from-nhis-green/10 to-nhis-green/5 rounded-xl p-4 mt-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-nhis-green/20 flex items-center justify-center">
+                            <Phone className="w-5 h-5 text-nhis-green" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">USSD Service</p>
+                            <p className="text-lg font-bold text-nhis-green">*929#</p>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Register, renew, or check your NHIS status
+                        </p>
+                      </div>
+
+                      {/* Contact Info */}
+                      <div className="mt-3 space-y-2">
+                        <a 
+                          href="tel:+233302223333" 
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Phone className="w-4 h-4" />
+                          +233 30 222 3333
+                        </a>
+                        <a 
+                          href="mailto:info@nhia.gov.gh" 
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Mail className="w-4 h-4" />
+                          info@nhia.gov.gh
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </div>
       </motion.nav>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md bg-card/95 backdrop-blur-xl rounded-2xl shadow-card-hover border border-border/50 overflow-hidden lg:hidden max-h-[70vh] overflow-y-auto"
-          >
-            <div className="p-4 space-y-2">
-              {navItems.map((item, index) => (
-                <div key={item.name}>
-                  {item.hasDropdown ? (
-                    <>
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground/60 font-medium text-sm">
-                        <item.icon className="w-5 h-5" />
-                        <span>{item.name}</span>
-                      </div>
-                      <div className="ml-4 space-y-1">
-                        {item.dropdownItems?.map((dropItem) => (
-                          <Link
-                            key={dropItem.name}
-                            to={dropItem.href}
-                            className={cn(
-                              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all",
-                              isActive(dropItem.href) 
-                                ? "text-primary bg-primary/10" 
-                                : "text-muted-foreground hover:text-primary hover:bg-primary/5"
-                            )}
-                          >
-                            <dropItem.icon className="w-4 h-4" />
-                            {dropItem.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <Link
-                        to={item.href}
-                        className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300",
-                          isActive(item.href) 
-                            ? "text-primary bg-primary/10" 
-                            : "text-foreground/80 hover:text-primary hover:bg-primary/5"
-                        )}
-                      >
-                        <item.icon className="w-5 h-5" />
-                        <span className="font-medium">{item.name}</span>
-                      </Link>
-                    </motion.div>
-                  )}
-                </div>
-              ))}
-              <div className="pt-4 border-t border-border space-y-2">
-                <Link
-                  to="/member-portal"
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-primary/10 text-primary font-medium"
-                >
-                  <UserCircle className="w-5 h-5" />
-                  Member Portal
-                </Link>
-                <Link
-                  to="/membership"
-                  className="btn-accent w-full text-center block"
-                >
-                  Get Started
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </>
