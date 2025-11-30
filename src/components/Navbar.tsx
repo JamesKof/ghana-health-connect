@@ -39,6 +39,7 @@ const quickActions = [
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,6 +49,11 @@ export const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      
+      // Calculate scroll progress
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
+      setScrollProgress(Math.min(100, Math.max(0, progress)));
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -64,6 +70,23 @@ export const Navbar = () => {
 
   return (
     <>
+      {/* Pulsing glow effect behind navbar */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isScrolled ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+        className="fixed left-1/2 -translate-x-1/2 z-40 pointer-events-none transition-all duration-500"
+        style={{
+          top: isScrolled ? '0' : '8px',
+          width: isScrolled ? '88%' : '91%',
+          maxWidth: isScrolled ? '56rem' : '64rem',
+          height: '80px',
+          background: 'radial-gradient(ellipse at center, rgba(0, 166, 81, 0.15) 0%, transparent 70%)',
+          filter: 'blur(20px)',
+          animation: isScrolled ? 'glow-pulse 3s ease-in-out infinite' : 'none',
+        }}
+      />
+
       {/* Animated gradient border wrapper */}
       <motion.div
         initial={{ y: -100 }}
@@ -83,7 +106,7 @@ export const Navbar = () => {
       >
         <nav
           className={cn(
-            "w-full rounded-[14px] transition-all duration-500",
+            "w-full rounded-[14px] transition-all duration-500 relative overflow-hidden",
             isScrolled 
               ? "bg-background/85 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]" 
               : "bg-background/70 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
@@ -92,6 +115,17 @@ export const Navbar = () => {
             WebkitBackdropFilter: 'blur(20px)',
           }}
         >
+          {/* Scroll Progress Indicator */}
+          <motion.div
+            className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow"
+            initial={{ width: 0 }}
+            animate={{ width: `${scrollProgress}%` }}
+            transition={{ duration: 0.1, ease: 'linear' }}
+            style={{
+              boxShadow: scrollProgress > 0 ? '0 0 8px rgba(0, 166, 81, 0.5)' : 'none',
+            }}
+          />
+          
           <div className={cn(
             "px-4 md:px-6 transition-all duration-500",
             isScrolled ? "py-2" : "py-2.5"

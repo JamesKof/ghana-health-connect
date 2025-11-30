@@ -197,6 +197,17 @@
     100% { background-position: 0% 50%; }
   }
 
+  @keyframes glow-pulse {
+    0%, 100% { 
+      opacity: 0.6;
+      transform: translateX(-50%) scale(1);
+    }
+    50% { 
+      opacity: 1;
+      transform: translateX(-50%) scale(1.05);
+    }
+  }
+
   .shimmer {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     background-size: 200% 100%;
