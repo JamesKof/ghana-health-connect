@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Info, Users, Gift, FileText, Phone, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown } from 'lucide-react';
+import { Menu, X, Home, Users, FileText, Phone, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
+import { ThemeToggle } from './ThemeToggle';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -16,6 +17,7 @@ const navItems = [
   ]},
   { name: 'FAQs', href: '/faqs', icon: HelpCircle },
   { name: 'Downloads', href: '/downloads', icon: Download },
+  { name: 'Contact', href: '/contact', icon: Mail },
 ];
 
 export const Navbar = () => {
@@ -49,8 +51,8 @@ export const Navbar = () => {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl transition-all duration-500 ${
           isScrolled 
-            ? 'bg-white/80 backdrop-blur-xl shadow-glass border border-white/50' 
-            : 'bg-white/60 backdrop-blur-lg border border-white/30'
+            ? 'bg-background/80 backdrop-blur-xl shadow-glass border border-border/50' 
+            : 'bg-background/60 backdrop-blur-lg border border-border/30'
         } rounded-2xl`}
       >
         <div className="px-4 md:px-6 py-3">
@@ -81,7 +83,7 @@ export const Navbar = () => {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className="absolute top-full left-0 mt-1 w-52 bg-white/95 backdrop-blur-xl rounded-xl shadow-card border border-border overflow-hidden"
+                            className="absolute top-full left-0 mt-1 w-52 bg-card/95 backdrop-blur-xl rounded-xl shadow-card border border-border overflow-hidden"
                           >
                             {item.dropdownItems?.map((dropItem) => (
                               <Link
@@ -120,8 +122,9 @@ export const Navbar = () => {
               ))}
             </div>
 
-            {/* CTA Button */}
+            {/* Right Side */}
             <div className="hidden md:flex items-center gap-3">
+              <ThemeToggle />
               <Link
                 to="/membership"
                 className="btn-accent text-sm"
@@ -131,12 +134,15 @@ export const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl hover:bg-primary/5 transition-colors"
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            <div className="flex items-center gap-2 lg:hidden">
+              <ThemeToggle />
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-xl hover:bg-primary/5 transition-colors"
+              >
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
       </motion.nav>
@@ -149,7 +155,7 @@ export const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md bg-white/95 backdrop-blur-xl rounded-2xl shadow-card-hover border border-white/50 overflow-hidden lg:hidden max-h-[70vh] overflow-y-auto"
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md bg-card/95 backdrop-blur-xl rounded-2xl shadow-card-hover border border-border/50 overflow-hidden lg:hidden max-h-[70vh] overflow-y-auto"
           >
             <div className="p-4 space-y-2">
               {navItems.map((item, index) => (
