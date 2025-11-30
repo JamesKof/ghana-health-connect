@@ -216,50 +216,107 @@ export const Navbar = () => {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 10, scale: 0.95 }}
                               transition={{ duration: 0.2, ease: 'easeOut' }}
-                              className="absolute top-full left-1/2 -translate-x-1/2 mt-3 z-[100] min-w-[480px] bg-background dark:bg-card rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-border overflow-hidden"
+                              className={cn(
+                                "absolute top-full left-1/2 -translate-x-1/2 mt-3 z-[100] bg-background dark:bg-card rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-border overflow-hidden",
+                                item.name === 'Services' ? "min-w-[580px]" : "min-w-[480px]"
+                              )}
                             >
                               {/* Gradient top border */}
                               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow" />
                               
-                              <div className="p-4">
+                              <div className="p-4 pt-5">
+                                {/* Quick Links Section for Services */}
+                                {item.name === 'Services' && (
+                                  <motion.div 
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="mb-4 pb-4 border-b border-border"
+                                  >
+                                    <div className="flex items-center gap-2 mb-3">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-nhis-green animate-pulse" />
+                                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Popular Services</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      {[
+                                        { name: 'Check Status', href: '/member-portal', icon: UserCircle },
+                                        { name: 'Find Facility', href: '/facilities', icon: MapPin },
+                                        { name: 'Renew Card', href: '/membership', icon: Users },
+                                      ].map((quick, idx) => (
+                                        <motion.div
+                                          key={quick.name}
+                                          initial={{ opacity: 0, scale: 0.9 }}
+                                          animate={{ opacity: 1, scale: 1 }}
+                                          transition={{ delay: idx * 0.05, duration: 0.2 }}
+                                        >
+                                          <Link
+                                            to={quick.href}
+                                            onClick={() => setOpenDropdown(null)}
+                                            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 border border-primary/10 transition-all duration-300 group/quick"
+                                          >
+                                            <quick.icon className="w-4 h-4 text-primary" />
+                                            <span className="text-xs font-medium text-foreground group-hover/quick:text-primary transition-colors">{quick.name}</span>
+                                          </Link>
+                                        </motion.div>
+                                      ))}
+                                    </div>
+                                  </motion.div>
+                                )}
+                                
+                                {/* Menu title */}
+                                <motion.div 
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  transition={{ delay: 0.1 }}
+                                  className="flex items-center gap-2 mb-3"
+                                >
+                                  <item.icon className="w-4 h-4 text-primary" />
+                                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{item.name}</span>
+                                </motion.div>
+                                
                                 <div className="grid grid-cols-2 gap-2">
                                   {item.dropdownItems?.map((dropItem, idx) => (
-                                    <Link
+                                    <motion.div
                                       key={dropItem.name}
-                                      to={dropItem.href}
-                                      onClick={() => setOpenDropdown(null)}
-                                      className="group/item relative flex items-start gap-3 p-3 rounded-xl transition-all duration-300 hover:bg-primary/5"
+                                      initial={{ opacity: 0, x: -20 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ 
+                                        delay: (item.name === 'Services' ? 0.15 : 0.05) + idx * 0.06,
+                                        duration: 0.25,
+                                        ease: [0.25, 0.46, 0.45, 0.94]
+                                      }}
                                     >
-                                      <motion.div 
-                                        initial={{ scale: 0.9, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        className={cn(
+                                      <Link
+                                        to={dropItem.href}
+                                        onClick={() => setOpenDropdown(null)}
+                                        className="group/item relative flex items-start gap-3 p-3 rounded-xl transition-all duration-300 hover:bg-primary/5"
+                                      >
+                                        <div className={cn(
                                           "shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
                                           isActive(dropItem.href) 
-                                            ? "bg-primary text-primary-foreground" 
-                                            : "bg-muted group-hover/item:bg-primary/10 group-hover/item:text-primary"
-                                        )}
-                                      >
-                                        <dropItem.icon className="w-5 h-5" />
-                                      </motion.div>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1">
-                                          <span className={cn(
-                                            "font-medium text-sm transition-colors",
-                                            isActive(dropItem.href) ? "text-primary" : "text-foreground group-hover/item:text-primary"
-                                          )}>
-                                            {dropItem.name}
-                                          </span>
-                                          <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300 text-primary" />
+                                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
+                                            : "bg-muted group-hover/item:bg-primary/10 group-hover/item:text-primary group-hover/item:scale-110"
+                                        )}>
+                                          <dropItem.icon className="w-5 h-5" />
                                         </div>
-                                        {dropItem.description && (
-                                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                                            {dropItem.description}
-                                          </p>
-                                        )}
-                                      </div>
-                                    </Link>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-1">
+                                            <span className={cn(
+                                              "font-medium text-sm transition-colors",
+                                              isActive(dropItem.href) ? "text-primary" : "text-foreground group-hover/item:text-primary"
+                                            )}>
+                                              {dropItem.name}
+                                            </span>
+                                            <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300 text-primary" />
+                                          </div>
+                                          {dropItem.description && (
+                                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 group-hover/item:text-muted-foreground/80 transition-colors">
+                                              {dropItem.description}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </Link>
+                                    </motion.div>
                                   ))}
                                 </div>
                               </div>
