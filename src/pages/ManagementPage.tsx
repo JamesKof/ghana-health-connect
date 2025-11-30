@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Users, Briefcase } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ExecutiveProps {
   name: string;
@@ -13,6 +14,7 @@ interface ExecutiveProps {
 interface DirectorProps {
   name: string;
   title: string;
+  image?: string;
 }
 
 const executives: ExecutiveProps[] = [
@@ -39,23 +41,23 @@ const executives: ExecutiveProps[] = [
 ];
 
 const directors: DirectorProps[] = [
-  { name: 'Dr. Gustav Cruickshank', title: 'Director, Financial Accounting' },
+  { name: 'Dr. Gustav Cruickshank', title: 'Director, Financial Accounting', image: 'https://www.nhis.gov.gh/cms/Management/Dr.-Gustav-Cruickshank.jpg' },
   { name: 'Dr. Francis Asenso-Boadi', title: 'Director, Special Project' },
-  { name: 'Mr. Ahmed Imoro', title: 'Director, Special Project' },
-  { name: 'Mr Hudu Issah', title: 'Director, Special Project' },
-  { name: 'Mr. Prince Appiah Debrah', title: 'Ag. Director, Internal Audit' },
-  { name: 'Mr. Francis Oti Frempong', title: 'Director, Special Project' },
-  { name: 'Dr. Mrs. Ruby Aileen Mensah Annan', title: 'Director, Strategic Health Purchasing' },
-  { name: 'Mr. Magnus Owusu-Agyemang', title: 'Director, Actuarial' },
-  { name: 'Mr. Raymond Avinu', title: 'Director, Administration' },
-  { name: 'Annette Obenewaa Adutwum', title: 'Director, Legal' },
+  { name: 'Mr. Ahmed Imoro', title: 'Director, Special Project', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Ahmed-Imoro.jpg' },
+  { name: 'Mr Hudu Issah', title: 'Director, Special Project', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Hudu-Issah.jpg' },
+  { name: 'Mr. Prince Appiah Debrah', title: 'Ag. Director, Internal Audit', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Prince-Appiah-Debrah.jpg' },
+  { name: 'Mr. Francis Oti Frempong', title: 'Director, Special Project', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Francis-Oti-Frempong.jpg' },
+  { name: 'Dr. Mrs. Ruby Aileen Mensah Annan', title: 'Director, Strategic Health Purchasing', image: 'https://www.nhis.gov.gh/cms/Management/Dr.-Mrs.-Ruby-Aileen-Mensah-Annan.jpg' },
+  { name: 'Mr. Magnus Owusu-Agyemang', title: 'Director, Actuarial', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Magnus-Owusu-Agyemang.jpg' },
+  { name: 'Mr. Raymond Avinu', title: 'Director, Administration', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Raymond-Avinu.jpg' },
+  { name: 'Annette Obenewaa Adutwum', title: 'Director, Legal', image: 'https://www.nhis.gov.gh/cms/Management/Annette-Obenewaa-Adutwum-.jpg' },
   { name: 'Dr. Yaw Opoku-Boateng', title: 'Director, Co-Payment Taskforce' },
   { name: 'Mrs. Eva Okai', title: 'Director, Management Systems and Control' },
   { name: 'Mr. Gingong Anthony Bueteem', title: 'Senior Director, Operations (Mahama Care)' },
-  { name: 'Mr. Richard Agyemang Badu', title: 'Ag. Director, Budget and Management Accounting' },
-  { name: 'Mr. Daniel Blankson', title: 'Ag. Director, Co-Payment' },
-  { name: 'Mr. Oswald Essuah-Mensah', title: 'Ag. Director, Corporate Affairs' },
-  { name: 'Dr. Abigail Derkyi-Kwarteng', title: 'Ag. Director, Claims' },
+  { name: 'Mr. Richard Agyemang Badu', title: 'Ag. Director, Budget and Management Accounting', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Richard-Agyemang-Badu.jpg' },
+  { name: 'Mr. Daniel Blankson', title: 'Ag. Director, Co-Payment', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Daniel-Blankson-.jpg' },
+  { name: 'Mr. Oswald Essuah-Mensah', title: 'Ag. Director, Corporate Affairs', image: 'https://www.nhis.gov.gh/cms/Management/Mr.-Oswald-Essuah-Mensah.jpg' },
+  { name: 'Dr. Abigail Derkyi-Kwarteng', title: 'Ag. Director, Claims', image: 'https://www.nhis.gov.gh/cms/Management/Dr.-Abigail-Derkyi-Kwarteng.jpg' },
   { name: 'Mr. Harold Boateng', title: 'Board Secretary' },
   { name: 'Mr. Akonde Isaac Gideon', title: 'Ag. Director, Co-Payment' },
   { name: 'Mr. Alagpulinsa Sebastian', title: 'Ag. Director, MRO' },
@@ -68,6 +70,16 @@ const directors: DirectorProps[] = [
   { name: 'Mr Suleymana Abass', title: 'Ag. Director, RPM & E' },
   { name: 'Mr. Zankawah Baba Sadique K', title: 'Ag. Director, Infrastructure' },
 ];
+
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .filter(n => !['Dr.', 'Mr.', 'Mrs.', 'Ms.', 'Miss.'].includes(n))
+    .map((n) => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
+};
 
 const ExecutiveCard = ({ name, title, image }: ExecutiveProps) => (
   <motion.div
@@ -95,7 +107,7 @@ const ExecutiveCard = ({ name, title, image }: ExecutiveProps) => (
   </motion.div>
 );
 
-const DirectorCard = ({ name, title }: DirectorProps) => (
+const DirectorCard = ({ name, title, image }: DirectorProps) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -103,8 +115,18 @@ const DirectorCard = ({ name, title }: DirectorProps) => (
     transition={{ duration: 0.3 }}
     className="p-4 rounded-xl bg-card/50 border border-border/50 hover:border-primary/30 hover:shadow-sm transition-all duration-300"
   >
-    <h4 className="font-medium text-foreground">{name}</h4>
-    <p className="text-sm text-muted-foreground mt-1">{title}</p>
+    <div className="flex items-center gap-4">
+      <Avatar className="h-14 w-14 shrink-0">
+        <AvatarImage src={image} alt={name} className="object-cover" />
+        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+          {getInitials(name)}
+        </AvatarFallback>
+      </Avatar>
+      <div className="min-w-0">
+        <h4 className="font-medium text-foreground truncate">{name}</h4>
+        <p className="text-sm text-muted-foreground truncate">{title}</p>
+      </div>
+    </div>
   </motion.div>
 );
 
@@ -210,7 +232,7 @@ const ManagementPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {directors.map((director, index) => (
               <DirectorCard key={index} {...director} />
             ))}
