@@ -1,7 +1,7 @@
 import { PageLayout } from '@/components/PageLayout';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, ArrowRight, Send, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Phone, Mail, MapPin, Clock, Send, Loader2 } from 'lucide-react';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { useState } from 'react';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
@@ -126,11 +126,7 @@ const ContactPage = () => {
           transition={{ duration: 0.6 }}
           className="container-custom relative z-10"
         >
-          <div className="flex items-center gap-2 text-white/70 text-sm mb-4">
-            <Link to="/" className="hover:text-white transition-colors">Home</Link>
-            <ArrowRight className="w-4 h-4" />
-            <span className="text-white">Contact Us</span>
-          </div>
+          <Breadcrumb />
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center">
               <Mail className="w-8 h-8 text-white" />

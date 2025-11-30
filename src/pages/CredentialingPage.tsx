@@ -1,8 +1,8 @@
 import { PageLayout } from '@/components/PageLayout';
 import { CredentialingSection } from '@/components/CredentialingSection';
 import { motion } from 'framer-motion';
-import { Award, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Award } from 'lucide-react';
+import { Breadcrumb } from '@/components/Breadcrumb';
 
 const CredentialingPage = () => {
   return (
@@ -16,11 +16,7 @@ const CredentialingPage = () => {
           transition={{ duration: 0.6 }}
           className="container-custom relative z-10"
         >
-          <div className="flex items-center gap-2 text-foreground/70 text-sm mb-4">
-            <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
-            <ArrowRight className="w-4 h-4" />
-            <span className="text-foreground">Credentialing</span>
-          </div>
+          <Breadcrumb />
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-foreground/10 flex items-center justify-center">
               <Award className="w-8 h-8 text-foreground" />
