@@ -6,8 +6,8 @@ const quickLinks = [
   { name: 'About NHIS', href: '/#about' },
   { name: 'Membership', href: '/membership' },
   { name: 'Benefits', href: '/#benefits' },
-  { name: 'Registration', href: '/#registration' },
   { name: 'FAQs', href: '/faqs' },
+  { name: 'Contact Us', href: '/contact' },
 ];
 
 const services = [
