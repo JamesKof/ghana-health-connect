@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { FloatingBackToTop } from "@/components/FloatingBackToTop";
+import { ChatWidget } from "@/components/ChatWidget";
 import HomePage from "./pages/HomePage";
 import MembershipPage from "./pages/MembershipPage";
 import ClaimsPaymentPage from "./pages/ClaimsPaymentPage";
@@ -26,6 +27,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <FloatingBackToTop />
+        <ChatWidget />
         <BrowserRouter>
           <AnimatePresence mode="wait">
             <Routes>
