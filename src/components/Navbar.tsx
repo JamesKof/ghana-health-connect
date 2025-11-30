@@ -106,10 +106,10 @@ export const Navbar = () => {
       >
         <nav
           className={cn(
-            "w-full rounded-[14px] transition-all duration-500 relative overflow-hidden",
+            "w-full rounded-[14px] transition-all duration-500 relative",
             isScrolled 
-              ? "bg-background/85 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]" 
-              : "bg-background/70 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
+              ? "bg-background/95 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]" 
+              : "bg-background/90 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
           )}
           style={{
             WebkitBackdropFilter: 'blur(20px)',
@@ -117,7 +117,7 @@ export const Navbar = () => {
         >
           {/* Scroll Progress Indicator */}
           <motion.div
-            className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow"
+            className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow rounded-b-full"
             initial={{ width: 0 }}
             animate={{ width: `${scrollProgress}%` }}
             transition={{ duration: 0.1, ease: 'linear' }}
@@ -152,23 +152,23 @@ export const Navbar = () => {
               </Link>
 
             {/* Desktop Navigation - Centered */}
-            <div className="hidden lg:flex items-center justify-center flex-1">
-              <div className="flex items-center gap-0.5 bg-muted/30 rounded-xl p-1">
+            <div className="hidden lg:flex items-center justify-center flex-1 min-w-0">
+              <div className="flex items-center gap-0.5 bg-muted/30 rounded-xl p-1 overflow-visible">
                 {navItems.map((item) => (
                   <div key={item.name} className="relative">
                     {item.hasDropdown ? (
                       <div
-                        className="relative"
+                        className="relative group"
                         onMouseEnter={() => setOpenDropdown(item.name)}
                         onMouseLeave={() => setOpenDropdown(null)}
                       >
                         <button className={cn(
-                          "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300",
+                          "flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs xl:text-sm font-medium transition-all duration-300 whitespace-nowrap",
                           openDropdown === item.name
                             ? "text-primary bg-background shadow-sm"
                             : "text-foreground/70 hover:text-foreground hover:bg-background/50"
                         )}>
-                          <item.icon className="w-4 h-4" />
+                          <item.icon className="w-3.5 h-3.5 shrink-0" />
                           <span>{item.name}</span>
                           <ChevronDown className={cn("w-3 h-3 transition-transform duration-200", openDropdown === item.name && "rotate-180")} />
                         </button>
@@ -179,24 +179,26 @@ export const Navbar = () => {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 8, scale: 0.96 }}
                               transition={{ duration: 0.15 }}
-                              className="absolute top-full left-0 mt-2 w-56 bg-background/95 backdrop-blur-2xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-border/50 overflow-hidden"
+                              className="absolute top-full left-0 mt-2 w-56 z-[100] bg-background dark:bg-card rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-border"
                             >
-                              {item.dropdownItems?.map((dropItem, idx) => (
-                                <Link
-                                  key={dropItem.name}
-                                  to={dropItem.href}
-                                  className={cn(
-                                    "flex items-center gap-3 px-4 py-3 text-sm transition-all",
-                                    isActive(dropItem.href) 
-                                      ? "text-primary bg-primary/10 font-medium" 
-                                      : "text-foreground/80 hover:text-primary hover:bg-muted/50",
-                                    idx !== 0 && "border-t border-border/30"
-                                  )}
-                                >
-                                  <dropItem.icon className="w-4 h-4" />
-                                  {dropItem.name}
-                                </Link>
-                              ))}
+                              <div className="py-1">
+                                {item.dropdownItems?.map((dropItem) => (
+                                  <Link
+                                    key={dropItem.name}
+                                    to={dropItem.href}
+                                    onClick={() => setOpenDropdown(null)}
+                                    className={cn(
+                                      "flex items-center gap-3 px-4 py-3 text-sm transition-all",
+                                      isActive(dropItem.href) 
+                                        ? "text-primary bg-primary/10 font-medium" 
+                                        : "text-foreground hover:text-primary hover:bg-muted"
+                                    )}
+                                  >
+                                    <dropItem.icon className="w-4 h-4 shrink-0" />
+                                    <span>{dropItem.name}</span>
+                                  </Link>
+                                ))}
+                              </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -205,13 +207,13 @@ export const Navbar = () => {
                       <Link
                         to={item.href}
                         className={cn(
-                          "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300",
+                          "flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs xl:text-sm font-medium transition-all duration-300 whitespace-nowrap",
                           isActive(item.href) 
                             ? "text-primary bg-background shadow-sm" 
                             : "text-foreground/70 hover:text-foreground hover:bg-background/50"
                         )}
                       >
-                        <item.icon className="w-4 h-4" />
+                        <item.icon className="w-3.5 h-3.5 shrink-0" />
                         <span>{item.name}</span>
                       </Link>
                     )}
@@ -221,7 +223,7 @@ export const Navbar = () => {
             </div>
 
             {/* Right Side - Desktop */}
-            <div className="hidden lg:flex items-center gap-1.5 shrink-0">
+            <div className="hidden lg:flex items-center gap-1 shrink-0">
               <button
                 onClick={() => setSearchOpen(true)}
                 className="p-2 rounded-lg hover:bg-muted/50 transition-colors text-foreground/70 hover:text-foreground"
@@ -233,14 +235,14 @@ export const Navbar = () => {
               <ThemeToggle />
               <Link
                 to="/member-portal"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 transition-all"
+                className="p-2 rounded-lg text-foreground/70 hover:text-foreground hover:bg-muted/50 transition-all"
+                aria-label="Member Portal"
               >
                 <UserCircle className="w-4 h-4" />
-                <span>Portal</span>
               </Link>
               <Link
                 to="/membership"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-sm"
               >
                 Get Started
               </Link>
