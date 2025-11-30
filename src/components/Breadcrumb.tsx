@@ -14,6 +14,11 @@ const routeNames: Record<string, string> = {
   'downloads': 'Downloads',
   'contact': 'Contact',
   'member-portal': 'Member Portal',
+  'about': 'About NHIS',
+  'nhia': 'The Authority',
+  'management': 'Management',
+  'board': 'Governing Board',
+  'medlist': 'Medicines List',
 };
 
 export const Breadcrumb = () => {

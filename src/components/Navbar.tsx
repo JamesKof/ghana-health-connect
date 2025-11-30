@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin, Phone, X } from 'lucide-react';
+import { Menu, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin, Phone, Info, Building2, Briefcase, Crown, Pill } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageToggle } from './LanguageToggle';
@@ -12,12 +12,19 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 
 const navItems = [
   { name: 'Home', href: '/', icon: Home },
+  { name: 'About', href: '#', icon: Info, hasDropdown: true, dropdownItems: [
+    { name: 'About NHIS', href: '/about', icon: Info },
+    { name: 'The Authority (NHIA)', href: '/nhia', icon: Building2 },
+    { name: 'Management', href: '/management', icon: Briefcase },
+    { name: 'Governing Board', href: '/board', icon: Crown },
+  ]},
   { name: 'Membership', href: '/membership', icon: Users },
   { name: 'Services', href: '#', icon: FileText, hasDropdown: true, dropdownItems: [
     { name: 'Claims Payment', href: '/claims-payment', icon: CreditCard },
     { name: 'Providers', href: '/providers', icon: Hospital },
     { name: 'Credentialing', href: '/credentialing', icon: Award },
     { name: 'Private Insurance', href: '/private-insurance', icon: Shield },
+    { name: 'Medicines List', href: '/medlist', icon: Pill },
   ]},
   { name: 'Facilities', href: '/facilities', icon: MapPin },
   { name: 'FAQs', href: '/faqs', icon: HelpCircle },
