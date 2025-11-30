@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 const languages: { code: Language; name: string; flag: string }[] = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
   { code: 'tw', name: 'Twi', flag: '🇬🇭' },
+  { code: 'ee', name: 'Ewe', flag: '🇬🇭' },
   { code: 'ga', name: 'Ga', flag: '🇬🇭' },
 ];
 

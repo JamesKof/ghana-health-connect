@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type Language = 'en' | 'tw' | 'ga';
+export type Language = 'en' | 'tw' | 'ee' | 'ga';
 
 interface LanguageContextType {
   language: Language;
@@ -128,6 +128,66 @@ const translations: Record<Language, Record<string, string>> = {
     'common.submit': 'Fa Kɔ',
     'common.cancel': 'Gyae',
     'common.loading': 'Ɛrekɔ so...',
+  },
+  ee: {
+    // Navigation - Ewe
+    'nav.home': 'Aƒe',
+    'nav.membership': 'Membership',
+    'nav.services': 'Dɔwɔwɔ',
+    'nav.faqs': 'Biabiawɔ',
+    'nav.downloads': 'Download',
+    'nav.contact': 'Ƒoƒo Mi',
+    'nav.getStarted': 'Dze Egɔme',
+    'nav.memberPortal': 'Member Portal',
+    
+    // Hero
+    'hero.title': 'Lãme Nyuie Na Ghana Ame Siaa',
+    'hero.subtitle': 'National Health Insurance Scheme na Ghana ame siaa le lãme dɔwɔwɔ nyui.',
+    'hero.cta': 'Dze Egɔme',
+    'hero.learnMore': 'Srɔ̃ Nu Geɖe',
+    
+    // About
+    'about.title': 'Tso NHIS Ŋu',
+    'about.purpose': 'Míaƒe Dɔ',
+    'about.mission': 'Míaƒe Dɔwɔwɔ',
+    
+    // Services
+    'services.title': 'Míaƒe Dɔwɔwɔ',
+    'services.registration': 'Ŋkɔŋlɔ̃ɔ̃ & Yeyeye',
+    'services.benefits': 'Viɖe',
+    'services.claims': 'Claims Processing',
+    
+    // Member Portal
+    'portal.title': 'Member Portal',
+    'portal.login': 'Ge Eme',
+    'portal.logout': 'Do Go',
+    'portal.welcome': 'Woezo',
+    'portal.membershipStatus': 'Membership Nɔnɔme',
+    'portal.claimsHistory': 'Claims Xoxo',
+    'portal.paymentRecords': 'Fexexe Xoxo',
+    'portal.memberId': 'Member ID',
+    'portal.expiryDate': 'Nuwuwu Ŋkeke',
+    'portal.status': 'Nɔnɔme',
+    'portal.active': 'Le Dɔ Wɔm',
+    'portal.expired': 'Ewu',
+    'portal.pending': 'Le Ncɔm',
+    'portal.amount': 'Ga',
+    'portal.date': 'Ŋkeke',
+    'portal.facility': 'Atikewɔƒe',
+    'portal.service': 'Dɔwɔwɔ',
+    'portal.demoNote': 'Demo Mode: Zã email kple password ɖesiaɖe ge eme',
+    
+    // Footer
+    'footer.quickLinks': 'Links Kabakaba',
+    'footer.contact': 'Ƒoƒo Mi',
+    'footer.followUs': 'Dze Míaƒe Yome',
+    'footer.rights': 'Mɔɖeɖe katã nye míatɔ',
+    
+    // Common
+    'common.search': 'Dii',
+    'common.submit': 'Ɖo Ɖa',
+    'common.cancel': 'Dzudzɔ',
+    'common.loading': 'Ele Dzɔm...',
   },
   ga: {
     // Navigation
