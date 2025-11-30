@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, ExternalLink, Linkedin } from 'lucide-react';
 import { NHISLogoWhite } from './NHISLogo';
+import { NewsletterSection } from './NewsletterSection';
 
 const quickLinks = [
   { name: 'About NHIS', href: '/#about' },
@@ -30,11 +31,15 @@ const socialLinks = [
   { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/NHIS_GHANA' },
   { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/nhisghana_gov' },
   { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/channel/UC1LlFtmEswsRRCvQZ6DTbBA' },
+  { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/company/national-health-insurance-authority' },
 ];
 
 export const Footer = () => {
   return (
     <footer id="contact" className="bg-gradient-to-b from-foreground to-nhis-blue-dark text-white">
+      {/* Newsletter Section */}
+      <NewsletterSection />
+      
       {/* USSD Banner */}
       <div className="bg-gradient-to-r from-nhis-yellow to-nhis-yellow-light py-4">
         <div className="container-custom">
