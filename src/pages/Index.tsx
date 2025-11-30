@@ -1,12 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Navbar } from '@/components/Navbar';
+import { HeroSection } from '@/components/HeroSection';
+import { AboutSection } from '@/components/AboutSection';
+import { MembershipSection } from '@/components/MembershipSection';
+import { ServicesSection } from '@/components/ServicesSection';
+import { BenefitsSection } from '@/components/BenefitsSection';
+import { VideoSection } from '@/components/VideoSection';
+import { RegistrationSection } from '@/components/RegistrationSection';
+import { FacilitiesSection } from '@/components/FacilitiesSection';
+import { ResourcesSection } from '@/components/ResourcesSection';
+import { CampaignHero } from '@/components/CampaignHero';
+import { NewsSection } from '@/components/NewsSection';
+import { Footer } from '@/components/Footer';
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main>
+        <HeroSection />
+        <AboutSection />
+        <MembershipSection />
+        <ServicesSection />
+        <BenefitsSection />
+        <VideoSection />
+        <RegistrationSection />
+        <FacilitiesSection />
+        <NewsSection />
+        <ResourcesSection />
+        <CampaignHero />
+      </main>
+      <Footer />
     </div>
   );
 };
