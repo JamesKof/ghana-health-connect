@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { PageLayout } from '@/components/PageLayout';
 import { motion } from 'framer-motion';
 import { useDemoAuth } from '@/contexts/DemoAuthContext';
@@ -14,30 +14,217 @@ import {
   LogOut,
   Mail,
   Lock,
-  AlertCircle
+  AlertCircle,
+  Download,
+  Printer,
+  KeyRound,
+  MailCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { MembershipCard } from '@/components/MembershipCard';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 const MemberPortalPage = () => {
   const { user, isAuthenticated, login, logout, claims, payments } = useDemoAuth();
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [authView, setAuthView] = useState<'login' | 'reset' | 'verify'>('login');
+  const [resetEmail, setResetEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await login(email, password);
+      toast({
+        title: "Login Successful",
+        description: "Welcome to your NHIS Member Portal.",
+      });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsLoading(false);
+    toast({
+      title: "Reset Link Sent",
+      description: `A password reset link has been sent to ${resetEmail}`,
+    });
+    setAuthView('login');
+    setResetEmail('');
+  };
+
+  const handleVerifyEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsLoading(false);
+    if (verificationCode === '123456') {
+      toast({
+        title: "Email Verified",
+        description: "Your email has been successfully verified.",
+      });
+      setAuthView('login');
+    } else {
+      toast({
+        title: "Verification Failed",
+        description: "Invalid verification code. Try: 123456",
+        variant: "destructive",
+      });
+    }
+    setVerificationCode('');
+  };
+
+  const handleDownloadCard = () => {
+    if (!cardRef.current) return;
+    
+    // Create a printable window with just the card
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      toast({
+        title: "Download Failed",
+        description: "Please allow popups to download the card.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>NHIS Membership Card - ${user?.memberId}</title>
+          <style>
+            body { 
+              margin: 0; 
+              padding: 20px;
+              display: flex; 
+              justify-content: center; 
+              align-items: center; 
+              min-height: 100vh;
+              background: #f5f5f5;
+              font-family: system-ui, -apple-system, sans-serif;
+            }
+            .card {
+              width: 400px;
+              height: 250px;
+              border-radius: 16px;
+              overflow: hidden;
+              box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+              position: relative;
+              background: linear-gradient(135deg, #0066B3 0%, #004080 50%, #002855 100%);
+            }
+            .card-content {
+              padding: 24px;
+              height: 100%;
+              box-sizing: border-box;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              color: white;
+            }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; }
+            .logo-area { display: flex; align-items: center; gap: 12px; }
+            .logo { width: 48px; height: 48px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+            .logo-text { font-weight: bold; color: #0066B3; font-size: 14px; }
+            .org-name h3 { margin: 0; font-size: 16px; }
+            .org-name p { margin: 4px 0 0; opacity: 0.8; font-size: 13px; }
+            .status { background: #00A651; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+            .member-info { margin-top: 16px; }
+            .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 4px; }
+            .name { font-size: 20px; font-weight: bold; margin: 0; }
+            .member-id { font-family: monospace; font-size: 14px; font-weight: bold; letter-spacing: 1px; }
+            .dates { display: flex; gap: 40px; margin-top: 12px; }
+            .date-item p { margin: 0; }
+            .footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.2); }
+            .footer-text { font-size: 11px; opacity: 0.6; }
+            .flags { display: flex; gap: 8px; }
+            .flag { width: 32px; height: 20px; border-radius: 4px; }
+            .flag-yellow { background: #F7B32B; }
+            .flag-green { background: #00A651; }
+            .ghana-stripe { position: absolute; bottom: 0; left: 0; right: 0; height: 4px; display: flex; }
+            .ghana-stripe div { flex: 1; }
+            .stripe-red { background: #CE1126; }
+            .stripe-yellow { background: #FCD116; }
+            .stripe-green { background: #006B3F; }
+            @media print { 
+              body { background: white; padding: 0; }
+              .card { box-shadow: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <div class="card-content">
+              <div class="header">
+                <div class="logo-area">
+                  <div class="logo"><span class="logo-text">NHIS</span></div>
+                  <div class="org-name">
+                    <h3>National Health</h3>
+                    <p>Insurance Scheme</p>
+                  </div>
+                </div>
+                <div class="status">✓ ACTIVE</div>
+              </div>
+              <div class="member-info">
+                <p class="label">Member Name</p>
+                <p class="name">${user?.name}</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px;">
+                  <div>
+                    <p class="label">Member ID</p>
+                    <p class="member-id">${user?.memberId}</p>
+                  </div>
+                  <div style="text-align: right;">
+                    <p class="label">Valid Until</p>
+                    <p style="font-weight: bold; margin: 0;">${user?.expiryDate}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="footer">
+                <span class="footer-text">Registered: ${user?.registrationDate}</span>
+                <div class="flags">
+                  <div class="flag flag-yellow"></div>
+                  <div class="flag flag-green"></div>
+                </div>
+              </div>
+            </div>
+            <div class="ghana-stripe">
+              <div class="stripe-red"></div>
+              <div class="stripe-yellow"></div>
+              <div class="stripe-green"></div>
+            </div>
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    
+    toast({
+      title: "Print Dialog Opened",
+      description: "Save as PDF or print your membership card.",
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -85,58 +272,156 @@ const MemberPortalPage = () => {
               <Card className="border-border/50 shadow-card">
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <User className="w-8 h-8 text-primary" />
+                    {authView === 'login' && <User className="w-8 h-8 text-primary" />}
+                    {authView === 'reset' && <KeyRound className="w-8 h-8 text-primary" />}
+                    {authView === 'verify' && <MailCheck className="w-8 h-8 text-primary" />}
                   </div>
-                  <CardTitle className="text-2xl">{t('portal.title')}</CardTitle>
+                  <CardTitle className="text-2xl">
+                    {authView === 'login' && t('portal.title')}
+                    {authView === 'reset' && 'Reset Password'}
+                    {authView === 'verify' && 'Verify Email'}
+                  </CardTitle>
                   <CardDescription>
-                    Login to view your membership status, claims history, and payment records.
+                    {authView === 'login' && 'Login to view your membership status, claims history, and payment records.'}
+                    {authView === 'reset' && 'Enter your email to receive a password reset link.'}
+                    {authView === 'verify' && 'Enter the verification code sent to your email.'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="bg-nhis-yellow/10 border border-nhis-yellow/20 rounded-lg p-3 mb-6 flex items-start gap-2">
-                    <AlertCircle className="w-5 h-5 text-nhis-yellow shrink-0 mt-0.5" />
-                    <p className="text-sm text-muted-foreground">
-                      {t('portal.demoNote')}
-                    </p>
-                  </div>
+                  {authView === 'login' && (
+                    <>
+                      <div className="bg-nhis-yellow/10 border border-nhis-yellow/20 rounded-lg p-3 mb-6 flex items-start gap-2">
+                        <AlertCircle className="w-5 h-5 text-nhis-yellow shrink-0 mt-0.5" />
+                        <p className="text-sm text-muted-foreground">
+                          {t('portal.demoNote')}
+                        </p>
+                      </div>
+                      
+                      <form onSubmit={handleLogin} className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Email</label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              type="email"
+                              placeholder="your@email.com"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="pl-10"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Password</label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              type="password"
+                              placeholder="••••••••"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              className="pl-10"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <Button 
+                          type="submit" 
+                          className="w-full btn-primary"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? t('common.loading') : t('portal.login')}
+                        </Button>
+                      </form>
+                      
+                      <div className="mt-6 pt-6 border-t border-border space-y-3">
+                        <button 
+                          onClick={() => setAuthView('reset')}
+                          className="w-full text-sm text-primary hover:underline flex items-center justify-center gap-2"
+                        >
+                          <KeyRound className="w-4 h-4" />
+                          Forgot Password?
+                        </button>
+                        <button 
+                          onClick={() => setAuthView('verify')}
+                          className="w-full text-sm text-muted-foreground hover:text-primary flex items-center justify-center gap-2"
+                        >
+                          <MailCheck className="w-4 h-4" />
+                          Verify Email Address
+                        </button>
+                      </div>
+                    </>
+                  )}
                   
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Email</label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  {authView === 'reset' && (
+                    <form onSubmit={handlePasswordReset} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Email Address</label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={resetEmail}
+                            onChange={(e) => setResetEmail(e.target.value)}
+                            className="pl-10"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <Button 
+                        type="submit" 
+                        className="w-full btn-primary"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? 'Sending...' : 'Send Reset Link'}
+                      </Button>
+                      <button 
+                        type="button"
+                        onClick={() => setAuthView('login')}
+                        className="w-full text-sm text-muted-foreground hover:text-primary"
+                      >
+                        Back to Login
+                      </button>
+                    </form>
+                  )}
+                  
+                  {authView === 'verify' && (
+                    <form onSubmit={handleVerifyEmail} className="space-y-4">
+                      <div className="bg-muted/50 rounded-lg p-3 mb-4">
+                        <p className="text-sm text-muted-foreground">
+                          Demo: Use code <code className="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono">123456</code>
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Verification Code</label>
                         <Input
-                          type="email"
-                          placeholder="your@email.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="pl-10"
+                          type="text"
+                          placeholder="Enter 6-digit code"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value)}
+                          className="text-center text-lg tracking-widest"
+                          maxLength={6}
                           required
                         />
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Password</label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full btn-primary"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? t('common.loading') : t('portal.login')}
-                    </Button>
-                  </form>
+                      <Button 
+                        type="submit" 
+                        className="w-full btn-primary"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? 'Verifying...' : 'Verify Email'}
+                      </Button>
+                      <button 
+                        type="button"
+                        onClick={() => setAuthView('login')}
+                        className="w-full text-sm text-muted-foreground hover:text-primary"
+                      >
+                        Back to Login
+                      </button>
+                    </form>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -183,45 +468,92 @@ const MemberPortalPage = () => {
       {/* Main Content */}
       <section className="py-8">
         <div className="container-custom">
-          {/* Membership Card */}
+          {/* Membership Card with Download */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <Card className="bg-gradient-to-br from-primary to-nhis-blue-dark text-white border-0 overflow-hidden relative">
-              <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
-              <CardContent className="p-6 relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-white/60 text-sm mb-1">{t('portal.memberId')}</p>
-                      <p className="text-xl font-mono font-bold tracking-wider">{user?.memberId}</p>
-                    </div>
-                    <div className="flex flex-wrap gap-6">
-                      <div>
-                        <p className="text-white/60 text-sm mb-1">Registered</p>
-                        <p className="font-medium">{user?.registrationDate}</p>
+            <Card className="overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-primary" />
+                    Membership Card
+                  </CardTitle>
+                  <CardDescription>
+                    Your official NHIS membership card
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Printer className="w-4 h-4 mr-2" />
+                        View Card
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-lg">
+                      <DialogHeader>
+                        <DialogTitle>Your NHIS Membership Card</DialogTitle>
+                        <DialogDescription>
+                          Download or print your membership card
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex justify-center py-6">
+                        <MembershipCard
+                          ref={cardRef}
+                          name={user?.name || ''}
+                          memberId={user?.memberId || ''}
+                          expiryDate={user?.expiryDate || ''}
+                          registrationDate={user?.registrationDate || ''}
+                          status={user?.membershipStatus || 'active'}
+                        />
                       </div>
+                      <div className="flex gap-3 justify-center">
+                        <Button onClick={handleDownloadCard} className="gap-2">
+                          <Download className="w-4 h-4" />
+                          Save / Print
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-gradient-to-br from-primary to-nhis-blue-dark text-white rounded-xl p-6 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div className="space-y-4">
                       <div>
-                        <p className="text-white/60 text-sm mb-1">{t('portal.expiryDate')}</p>
-                        <p className="font-medium">{user?.expiryDate}</p>
+                        <p className="text-white/60 text-sm mb-1">{t('portal.memberId')}</p>
+                        <p className="text-xl font-mono font-bold tracking-wider">{user?.memberId}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-6">
+                        <div>
+                          <p className="text-white/60 text-sm mb-1">Registered</p>
+                          <p className="font-medium">{user?.registrationDate}</p>
+                        </div>
+                        <div>
+                          <p className="text-white/60 text-sm mb-1">{t('portal.expiryDate')}</p>
+                          <p className="font-medium">{user?.expiryDate}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-center md:text-right">
-                    <p className="text-white/60 text-sm mb-2">{t('portal.status')}</p>
-                    <div className={cn(
-                      "inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold",
-                      user?.membershipStatus === 'active' && "bg-nhis-green text-white",
-                      user?.membershipStatus === 'expired' && "bg-destructive text-white",
-                      user?.membershipStatus === 'pending' && "bg-nhis-yellow text-black"
-                    )}>
-                      {user?.membershipStatus === 'active' && <CheckCircle2 className="w-5 h-5" />}
-                      {user?.membershipStatus === 'expired' && <XCircle className="w-5 h-5" />}
-                      {user?.membershipStatus === 'pending' && <Clock className="w-5 h-5" />}
-                      {user?.membershipStatus?.toUpperCase()}
+                    <div className="text-center md:text-right">
+                      <p className="text-white/60 text-sm mb-2">{t('portal.status')}</p>
+                      <div className={cn(
+                        "inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold",
+                        user?.membershipStatus === 'active' && "bg-nhis-green text-white",
+                        user?.membershipStatus === 'expired' && "bg-destructive text-white",
+                        user?.membershipStatus === 'pending' && "bg-nhis-yellow text-black"
+                      )}>
+                        {user?.membershipStatus === 'active' && <CheckCircle2 className="w-5 h-5" />}
+                        {user?.membershipStatus === 'expired' && <XCircle className="w-5 h-5" />}
+                        {user?.membershipStatus === 'pending' && <Clock className="w-5 h-5" />}
+                        {user?.membershipStatus?.toUpperCase()}
+                      </div>
                     </div>
                   </div>
                 </div>
