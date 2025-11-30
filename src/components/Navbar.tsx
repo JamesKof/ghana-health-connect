@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Users, FileText, Phone, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail } from 'lucide-react';
+import { Menu, X, Home, Users, FileText, Phone, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
 import { ThemeToggle } from './ThemeToggle';
+import { SearchDialog } from './SearchDialog';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -24,6 +25,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -124,6 +126,13 @@ export const Navbar = () => {
 
             {/* Right Side */}
             <div className="hidden md:flex items-center gap-3">
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="p-2 rounded-xl hover:bg-primary/5 transition-colors text-foreground/80 hover:text-primary"
+                aria-label="Search"
+              >
+                <Search className="w-5 h-5" />
+              </button>
               <ThemeToggle />
               <Link
                 to="/membership"
@@ -135,6 +144,13 @@ export const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <div className="flex items-center gap-2 lg:hidden">
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="p-2 rounded-xl hover:bg-primary/5 transition-colors"
+                aria-label="Search"
+              >
+                <Search className="w-5 h-5" />
+              </button>
               <ThemeToggle />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -218,6 +234,8 @@ export const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </>
   );
 };
