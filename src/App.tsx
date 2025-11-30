@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { FloatingBackToTop } from "@/components/FloatingBackToTop";
 import HomePage from "./pages/HomePage";
 import MembershipPage from "./pages/MembershipPage";
 import ClaimsPaymentPage from "./pages/ClaimsPaymentPage";
@@ -24,6 +25,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <FloatingBackToTop />
         <BrowserRouter>
           <AnimatePresence mode="wait">
             <Routes>
