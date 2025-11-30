@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle } from 'lucide-react';
+import { Menu, X, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageToggle } from './LanguageToggle';
@@ -17,6 +17,7 @@ const navItems = [
     { name: 'Credentialing', href: '/credentialing', icon: Award },
     { name: 'Private Insurance', href: '/private-insurance', icon: Shield },
   ]},
+  { name: 'Facilities', href: '/facilities', icon: MapPin },
   { name: 'FAQs', href: '/faqs', icon: HelpCircle },
   { name: 'Downloads', href: '/downloads', icon: Download },
   { name: 'Contact', href: '/contact', icon: Mail },
