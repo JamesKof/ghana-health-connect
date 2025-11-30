@@ -1,9 +1,31 @@
-export const NHISLogo = ({ className = "h-10 w-auto" }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="20" cy="20" r="18" fill="#0066B3"/>
-    <path d="M12 14h4v12h-4v-12zm8 0h4v12h-4v-12zm-4 4h4v4h-4v-4z" fill="white"/>
-    <circle cx="20" cy="20" r="6" fill="#00A651"/>
-    <text x="45" y="18" fontFamily="Outfit, sans-serif" fontWeight="700" fontSize="14" fill="#0066B3">NHIS</text>
-    <text x="45" y="32" fontFamily="Inter, sans-serif" fontWeight="400" fontSize="8" fill="#666">Ghana</text>
-  </svg>
+import nhisLogoOfficial from '@/assets/nhis-logo-official.jpg';
+
+interface NHISLogoProps {
+  className?: string;
+  showText?: boolean;
+  inverted?: boolean;
+}
+
+export const NHISLogo = ({ 
+  className = "h-10 w-auto", 
+  showText = true,
+  inverted = false 
+}: NHISLogoProps) => (
+  <div className={`flex items-center gap-3 ${className}`}>
+    <img 
+      src={nhisLogoOfficial} 
+      alt="NHIS Ghana Logo" 
+      className={`h-full w-auto object-contain ${inverted ? 'brightness-0 invert' : ''}`}
+    />
+    {showText && (
+      <div className="hidden sm:block">
+        <p className={`font-display font-bold text-lg leading-tight ${inverted ? 'text-white' : 'text-primary'}`}>
+          NHIS
+        </p>
+        <p className={`text-xs ${inverted ? 'text-white/70' : 'text-muted-foreground'}`}>
+          Ghana
+        </p>
+      </div>
+    )}
+  </div>
 );
