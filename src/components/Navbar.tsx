@@ -1,28 +1,28 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, Info, Users, Gift, FileText, UserPlus, Phone, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Home, Info, Users, Gift, FileText, Phone, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
+import { cn } from '@/lib/utils';
 
 const navItems = [
-  { name: 'Home', href: '#home', icon: Home },
-  { name: 'About', href: '#about', icon: Info },
-  { name: 'Membership', href: '#membership-detail', icon: Users },
-  { name: 'Benefits', href: '#benefits', icon: Gift },
-  { name: 'Services', href: '#services', icon: FileText, hasDropdown: true, dropdownItems: [
-    { name: 'Claims Payment', href: '#claims-payment', icon: CreditCard },
-    { name: 'Providers', href: '#providers', icon: Hospital },
-    { name: 'Credentialing', href: '#credentialing', icon: Award },
-    { name: 'Private Insurance', href: '#private-health-insurance', icon: Shield },
+  { name: 'Home', href: '/', icon: Home },
+  { name: 'Membership', href: '/membership', icon: Users },
+  { name: 'Services', href: '#', icon: FileText, hasDropdown: true, dropdownItems: [
+    { name: 'Claims Payment', href: '/claims-payment', icon: CreditCard },
+    { name: 'Providers', href: '/providers', icon: Hospital },
+    { name: 'Credentialing', href: '/credentialing', icon: Award },
+    { name: 'Private Insurance', href: '/private-insurance', icon: Shield },
   ]},
-  { name: 'FAQs', href: '#faqs', icon: HelpCircle },
-  { name: 'Downloads', href: '#downloads', icon: Download },
-  { name: 'Contact', href: '#contact', icon: Phone },
+  { name: 'FAQs', href: '/faqs', icon: HelpCircle },
+  { name: 'Downloads', href: '/downloads', icon: Download },
 ];
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +31,15 @@ export const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  const isActive = (href: string) => {
+    if (href === '/') return location.pathname === '/';
+    return location.pathname.startsWith(href);
+  };
 
   return (
     <>
@@ -47,9 +56,9 @@ export const Navbar = () => {
         <div className="px-4 md:px-6 py-3">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <a href="#home" className="flex items-center gap-2 group">
+            <Link to="/" className="flex items-center gap-2 group">
               <NHISLogo className="h-10 md:h-12" />
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
@@ -64,7 +73,7 @@ export const Navbar = () => {
                       <button className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all duration-300">
                         <item.icon className="w-4 h-4" />
                         <span>{item.name}</span>
-                        <ChevronDown className="w-3 h-3" />
+                        <ChevronDown className={cn("w-3 h-3 transition-transform", openDropdown === item.name && "rotate-180")} />
                       </button>
                       <AnimatePresence>
                         {openDropdown === item.name && (
@@ -72,30 +81,40 @@ export const Navbar = () => {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className="absolute top-full left-0 mt-1 w-48 bg-white/95 backdrop-blur-xl rounded-xl shadow-card border border-border overflow-hidden"
+                            className="absolute top-full left-0 mt-1 w-52 bg-white/95 backdrop-blur-xl rounded-xl shadow-card border border-border overflow-hidden"
                           >
                             {item.dropdownItems?.map((dropItem) => (
-                              <a
+                              <Link
                                 key={dropItem.name}
-                                href={dropItem.href}
-                                className="flex items-center gap-2 px-4 py-3 text-sm text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all"
+                                to={dropItem.href}
+                                className={cn(
+                                  "flex items-center gap-2 px-4 py-3 text-sm transition-all",
+                                  isActive(dropItem.href) 
+                                    ? "text-primary bg-primary/10" 
+                                    : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                                )}
                               >
                                 <dropItem.icon className="w-4 h-4" />
                                 {dropItem.name}
-                              </a>
+                              </Link>
                             ))}
                           </motion.div>
                         )}
                       </AnimatePresence>
                     </div>
                   ) : (
-                    <a
-                      href={item.href}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all duration-300"
+                    <Link
+                      to={item.href}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300",
+                        isActive(item.href) 
+                          ? "text-primary bg-primary/10" 
+                          : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                      )}
                     >
                       <item.icon className="w-4 h-4" />
                       <span>{item.name}</span>
-                    </a>
+                    </Link>
                   )}
                 </div>
               ))}
@@ -103,12 +122,12 @@ export const Navbar = () => {
 
             {/* CTA Button */}
             <div className="hidden md:flex items-center gap-3">
-              <a
-                href="#registration"
+              <Link
+                to="/membership"
                 className="btn-accent text-sm"
               >
                 Get Started
-              </a>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -135,42 +154,59 @@ export const Navbar = () => {
             <div className="p-4 space-y-2">
               {navItems.map((item, index) => (
                 <div key={item.name}>
-                  <motion.a
-                    href={item.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => !item.hasDropdown && setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all duration-300"
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
-                  </motion.a>
-                  {item.hasDropdown && item.dropdownItems && (
-                    <div className="ml-6 space-y-1 mt-1">
-                      {item.dropdownItems.map((dropItem) => (
-                        <a
-                          key={dropItem.name}
-                          href={dropItem.href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
-                        >
-                          <dropItem.icon className="w-4 h-4" />
-                          {dropItem.name}
-                        </a>
-                      ))}
-                    </div>
+                  {item.hasDropdown ? (
+                    <>
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground/60 font-medium text-sm">
+                        <item.icon className="w-5 h-5" />
+                        <span>{item.name}</span>
+                      </div>
+                      <div className="ml-4 space-y-1">
+                        {item.dropdownItems?.map((dropItem) => (
+                          <Link
+                            key={dropItem.name}
+                            to={dropItem.href}
+                            className={cn(
+                              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all",
+                              isActive(dropItem.href) 
+                                ? "text-primary bg-primary/10" 
+                                : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+                            )}
+                          >
+                            <dropItem.icon className="w-4 h-4" />
+                            {dropItem.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <Link
+                        to={item.href}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300",
+                          isActive(item.href) 
+                            ? "text-primary bg-primary/10" 
+                            : "text-foreground/80 hover:text-primary hover:bg-primary/5"
+                        )}
+                      >
+                        <item.icon className="w-5 h-5" />
+                        <span className="font-medium">{item.name}</span>
+                      </Link>
+                    </motion.div>
                   )}
                 </div>
               ))}
               <div className="pt-4 border-t border-border">
-                <a
-                  href="#registration"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                <Link
+                  to="/membership"
                   className="btn-accent w-full text-center block"
                 >
                   Get Started
-                </a>
+                </Link>
               </div>
             </div>
           </motion.div>
