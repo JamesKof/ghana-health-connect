@@ -64,35 +64,58 @@ export const Navbar = () => {
 
   return (
     <>
-      <motion.nav
+      {/* Animated gradient border wrapper */}
+      <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className={cn(
-          "fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl transition-all duration-500 rounded-2xl",
+          "fixed left-1/2 -translate-x-1/2 z-50 p-[1.5px] rounded-2xl transition-all duration-500",
           isScrolled 
-            ? "bg-background/70 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20 dark:border-white/10" 
-            : "bg-background/50 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-white/30 dark:border-white/5"
+            ? "top-2 w-[92%] max-w-6xl" 
+            : "top-4 w-[95%] max-w-7xl"
         )}
         style={{
-          WebkitBackdropFilter: 'blur(20px)',
+          background: 'linear-gradient(90deg, #0066B3, #00A651, #F7B32B, #00A651, #0066B3)',
+          backgroundSize: '200% 100%',
+          animation: 'gradient-flow 4s ease infinite',
         }}
       >
-        <div className="px-4 md:px-6 py-2.5">
-          <div className="flex items-center justify-between gap-4">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group shrink-0">
-              <motion.div 
-                whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-2"
-              >
-                <NHISLogo className="h-10 md:h-12" showText={false} />
-                <div className="hidden sm:block">
-                  <p className="font-display font-bold text-base leading-tight text-primary">NHIS</p>
-                  <p className="text-[10px] text-muted-foreground">Ghana</p>
-                </div>
-              </motion.div>
-            </Link>
+        <nav
+          className={cn(
+            "w-full rounded-[14px] transition-all duration-500",
+            isScrolled 
+              ? "bg-background/85 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]" 
+              : "bg-background/70 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
+          )}
+          style={{
+            WebkitBackdropFilter: 'blur(20px)',
+          }}
+        >
+          <div className={cn(
+            "px-4 md:px-6 transition-all duration-500",
+            isScrolled ? "py-2" : "py-2.5"
+          )}>
+            <div className="flex items-center justify-between gap-4">
+              {/* Logo */}
+              <Link to="/" className="flex items-center gap-3 group shrink-0">
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="flex items-center gap-2"
+                >
+                  <NHISLogo className={cn(
+                    "transition-all duration-500",
+                    isScrolled ? "h-8 md:h-10" : "h-10 md:h-12"
+                  )} showText={false} />
+                  <div className={cn(
+                    "hidden sm:block transition-all duration-500",
+                    isScrolled && "scale-95 origin-left"
+                  )}>
+                    <p className="font-display font-bold text-base leading-tight text-primary">NHIS</p>
+                    <p className="text-[10px] text-muted-foreground">Ghana</p>
+                  </div>
+                </motion.div>
+              </Link>
 
             {/* Desktop Navigation - Centered */}
             <div className="hidden lg:flex items-center justify-center flex-1">
@@ -348,7 +371,8 @@ export const Navbar = () => {
             </div>
           </div>
         </div>
-      </motion.nav>
+        </nav>
+      </motion.div>
 
       <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </>
