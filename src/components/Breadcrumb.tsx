@@ -19,6 +19,7 @@ const routeNames: Record<string, string> = {
   'management': 'Management',
   'board': 'Governing Board',
   'medlist': 'Medicines List',
+  'news': 'News',
 };
 
 export const Breadcrumb = () => {
