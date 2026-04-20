@@ -92,6 +92,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          emailed_at: string | null
           fetched_at: string
           id: string
           image_url: string | null
@@ -106,6 +107,7 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          emailed_at?: string | null
           fetched_at?: string
           id?: string
           image_url?: string | null
@@ -120,6 +122,7 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          emailed_at?: string | null
           fetched_at?: string
           id?: string
           image_url?: string | null
@@ -130,6 +133,39 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string
+        }
+        Relationships: []
+      }
+      news_subscribers: {
+        Row: {
+          confirm_token: string
+          confirmed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          status: string
+          unsubscribe_token: string
+          updated_at: string
+        }
+        Insert: {
+          confirm_token?: string
+          confirmed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          status?: string
+          unsubscribe_token?: string
+          updated_at?: string
+        }
+        Update: {
+          confirm_token?: string
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          status?: string
+          unsubscribe_token?: string
+          updated_at?: string
         }
         Relationships: []
       }
