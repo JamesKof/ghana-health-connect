@@ -151,9 +151,14 @@ export const NewsSection = () => {
                         {formatDate(news)}
                       </span>
                     </div>
-                    <h3 className="font-display font-semibold text-foreground mb-3 line-clamp-3 group-hover:text-primary transition-colors">
+                    <h3 className="font-display font-semibold text-foreground mb-2 line-clamp-3 group-hover:text-primary transition-colors">
                       {news.title}
                     </h3>
+                    {news.summary && (
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                        {news.summary}
+                      </p>
+                    )}
                   </div>
                   <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm mt-2">
                     Read More
