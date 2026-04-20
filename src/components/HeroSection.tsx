@@ -4,22 +4,26 @@ import heroImage from '@/assets/hero-healthcare.jpg';
 
 export const HeroSection = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
+    <section id="home" className="relative min-h-[100svh] flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img 
-          src={heroImage} 
-          alt="Ghanaian family at healthcare facility" 
+        <img
+          src={heroImage}
+          alt="Ghanaian family at healthcare facility"
           className="w-full h-full object-cover"
+          loading="eager"
+          // @ts-expect-error - fetchPriority is valid HTML5 but not yet in React's type defs everywhere
+          fetchpriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-nhis-blue-dark/95 via-primary/90 to-primary/70" />
       </div>
-      
-      {/* Decorative Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+
+      {/* Decorative Elements — hidden on small screens to reduce paint cost */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
         <div className="absolute top-20 right-10 w-72 h-72 bg-nhis-yellow/20 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-20 left-10 w-96 h-96 bg-nhis-green/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '-3s' }} />
-        
+
         {/* Grid Pattern */}
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)',
@@ -27,7 +31,7 @@ export const HeroSection = () => {
         }} />
       </div>
 
-      <div className="container-custom relative z-10 pt-32 pb-20">
+      <div className="container-custom relative z-10 pt-28 pb-16 sm:pt-32 sm:pb-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <motion.div
@@ -46,24 +50,24 @@ export const HeroSection = () => {
               <span className="text-white/90 text-sm font-medium">Ghana's National Health Insurance</span>
             </motion.div>
 
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            <h1 className="font-display text-[clamp(1.875rem,7vw,3.75rem)] lg:text-6xl font-bold text-white leading-[1.1] mb-5 sm:mb-6 break-words">
               Quality Healthcare Made{' '}
               <span className="text-nhis-yellow">Accessible</span>{' '}
               to Every Ghanaian
             </h1>
 
-            <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
-              The National Health Insurance Scheme (NHIS) is a social intervention program 
-              introduced by government to provide financial access to quality health care 
+            <p className="text-base sm:text-lg md:text-xl text-white/85 leading-relaxed mb-7 sm:mb-8 max-w-xl mx-auto lg:mx-0">
+              The National Health Insurance Scheme (NHIS) is a social intervention program
+              introduced by government to provide financial access to quality health care
               for all residents in Ghana.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
               <motion.a
                 href="#registration"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="btn-accent inline-flex items-center justify-center gap-2 text-lg px-8"
+                className="btn-accent inline-flex items-center justify-center gap-2 text-base sm:text-lg px-6 sm:px-8 min-h-[48px] touch-manipulation"
               >
                 Get Started
                 <ArrowRight className="w-5 h-5" />
@@ -72,7 +76,7 @@ export const HeroSection = () => {
                 href="#about"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:bg-white/20 inline-flex items-center justify-center gap-2"
+                className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-6 sm:px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:bg-white/20 inline-flex items-center justify-center gap-2 min-h-[48px] touch-manipulation"
               >
                 Learn More
               </motion.a>
@@ -83,19 +87,19 @@ export const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20"
+              className="grid grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/20"
             >
               <div className="text-center lg:text-left">
-                <p className="text-3xl md:text-4xl font-bold text-white">95%</p>
-                <p className="text-white/70 text-sm">Disease Coverage</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">95%</p>
+                <p className="text-white/70 text-[11px] sm:text-sm leading-tight">Disease Coverage</p>
               </div>
               <div className="text-center lg:text-left">
-                <p className="text-3xl md:text-4xl font-bold text-white">16</p>
-                <p className="text-white/70 text-sm">Regions Covered</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">16</p>
+                <p className="text-white/70 text-[11px] sm:text-sm leading-tight">Regions Covered</p>
               </div>
               <div className="text-center lg:text-left">
-                <p className="text-3xl md:text-4xl font-bold text-white">4000+</p>
-                <p className="text-white/70 text-sm">Accredited Facilities</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">4000+</p>
+                <p className="text-white/70 text-[11px] sm:text-sm leading-tight">Accredited Facilities</p>
               </div>
             </motion.div>
           </motion.div>
