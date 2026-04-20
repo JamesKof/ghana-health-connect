@@ -204,6 +204,35 @@ export const NewsSection = () => {
             )}
           </>
         )}
+
+        {/* Email subscription CTA */}
+        {!isLoading && !isError && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mt-12 rounded-2xl border border-border/50 bg-gradient-to-br from-primary/5 via-card to-nhis-green/5 p-6 md:p-8"
+          >
+            <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex items-start gap-4 flex-1">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-bold text-foreground mb-1">
+                    Get NHIS news in your inbox
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Subscribe to receive new announcements, policies, and updates as soon as they're published.
+                  </p>
+                </div>
+              </div>
+              <div className="md:max-w-md md:w-full">
+                <NewsSubscribeForm variant="compact" />
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );
