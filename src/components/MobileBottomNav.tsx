@@ -23,9 +23,10 @@ export const MobileBottomNav = () => {
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 safe-area-bottom"
+      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 safe-area-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
+      aria-label="Mobile navigation"
     >
-      <div className="flex items-center justify-around px-2 py-2">
+      <div className="flex items-center justify-around px-1 py-1.5 sm:px-2 sm:py-2">
         {navItems.map((item) => {
           const active = isActive(item.href);
           return (
@@ -33,10 +34,10 @@ export const MobileBottomNav = () => {
               key={item.name}
               to={item.href}
               className={cn(
-                "flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all min-w-[64px]",
-                active 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
+                "flex flex-col items-center gap-0.5 sm:gap-1 px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all min-w-[56px] sm:min-w-[64px] min-h-[44px] touch-manipulation",
+                active
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground active:text-foreground"
               )}
             >
               <div className={cn(

@@ -14,18 +14,19 @@ export const USSDWidget = () => {
 
   return (
     <>
-      {/* Floating USSD Button */}
+      {/* Floating USSD Button — positioned above WhatsApp + back-to-top on mobile */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-24 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-nhis-yellow to-nhis-yellow-light text-foreground font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+        aria-label="Show NHIS USSD codes"
+        className="fixed right-4 sm:right-6 bottom-[14rem] lg:bottom-40 z-40 flex items-center gap-2 px-3 py-2.5 sm:px-4 sm:py-3 bg-gradient-to-r from-nhis-yellow to-nhis-yellow-light text-foreground font-bold rounded-full shadow-lg hover:shadow-xl transition-all touch-manipulation"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.2, type: 'spring', stiffness: 260, damping: 20 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        <Phone className="w-5 h-5" />
-        <span className="font-mono">*929#</span>
+        <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
+        <span className="font-mono text-sm sm:text-base">*929#</span>
       </motion.button>
 
       {/* USSD Modal */}
