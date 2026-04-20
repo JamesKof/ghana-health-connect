@@ -1,8 +1,9 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Calendar, ArrowRight, Newspaper, Filter, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Search, Calendar, ArrowRight, Newspaper, Filter, Loader2, AlertCircle, ExternalLink, Mail } from 'lucide-react';
 import { PageLayout } from '@/components/PageLayout';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { NewsSubscribeForm } from '@/components/NewsSubscribeForm';
 import { useNews, type NewsArticle } from '@/hooks/useNews';
 import { cn } from '@/lib/utils';
 
