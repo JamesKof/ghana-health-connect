@@ -10,6 +10,7 @@
 // CORS: open (public news).
 
 // deno-lint-ignore-file no-explicit-any
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -156,7 +157,7 @@ async function scrapeAllPages(maxPages = 3): Promise<ScrapedArticle[]> {
   return all;
 }
 
-Deno.serve(async (req: Request) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
