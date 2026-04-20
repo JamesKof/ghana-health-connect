@@ -17,7 +17,9 @@ export const FloatingWhatsApp = ({
 
   return (
     <motion.div
-      className="fixed bottom-6 right-6 z-50"
+      // On mobile, sit above the 64px bottom nav (~88px) so the button is never hidden;
+      // on desktop, anchor to the corner.
+      className="fixed right-4 sm:right-6 bottom-[5.5rem] lg:bottom-6 z-50"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 1, type: 'spring', stiffness: 260, damping: 20 }}
@@ -45,12 +47,13 @@ export const FloatingWhatsApp = ({
         rel="noopener noreferrer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative w-14 h-14 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20BA5C] transition-colors"
+        aria-label="Chat with NHIS on WhatsApp"
+        className="relative w-14 h-14 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20BA5C] transition-colors touch-manipulation"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
       >
         {/* Pulse animation */}
-        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-25" />
+        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-25" aria-hidden />
         <MessageCircle className="w-7 h-7 relative z-10" />
       </motion.a>
     </motion.div>

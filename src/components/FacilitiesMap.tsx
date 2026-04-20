@@ -299,9 +299,9 @@ export const FacilitiesMap = () => {
   }
 
   return (
-    <div className="grid lg:grid-cols-3 gap-6">
+    <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
       {/* Sidebar */}
-      <div className="lg:col-span-1 space-y-4">
+      <div className="lg:col-span-1 space-y-3 sm:space-y-4 order-2 lg:order-1">
         {/* Location Status */}
         {userLocation && (
           <div className="flex items-center gap-2 text-sm text-nhis-green">
@@ -312,24 +312,24 @@ export const FacilitiesMap = () => {
 
         {/* Search & Filter */}
         <Card>
-          <CardContent className="p-4 space-y-4">
+          <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search facilities..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-11"
               />
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-32 overflow-y-auto">
               {regions.map(region => (
                 <Button
                   key={region}
                   variant={selectedRegion === region ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedRegion(region)}
-                  className="text-xs"
+                  className="text-xs touch-manipulation"
                 >
                   {region}
                 </Button>
@@ -339,7 +339,7 @@ export const FacilitiesMap = () => {
         </Card>
 
         {/* Facilities List */}
-        <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+        <div className="space-y-2 max-h-[320px] sm:max-h-[400px] lg:max-h-[500px] overflow-y-auto pr-1 sm:pr-2">
           {filteredFacilities.map(facility => (
             <FacilityListItem
               key={facility.id}
@@ -358,7 +358,7 @@ export const FacilitiesMap = () => {
       </div>
 
       {/* Map */}
-      <div className="lg:col-span-2 relative">
+      <div className="lg:col-span-2 relative order-1 lg:order-2">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-2xl z-10">
             <div className="text-center">
@@ -367,11 +367,11 @@ export const FacilitiesMap = () => {
             </div>
           </div>
         )}
-        <div 
-          ref={mapContainer} 
-          className="w-full h-[600px] rounded-2xl shadow-card overflow-hidden"
+        <div
+          ref={mapContainer}
+          className="w-full h-[60vh] min-h-[360px] sm:h-[500px] lg:h-[600px] rounded-2xl shadow-card overflow-hidden"
         />
-        
+
         {/* Selected Facility Detail Card */}
         {selectedFacility && (
           <FacilityDetailCard

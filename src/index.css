@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Fonts are loaded via <link rel="stylesheet"> in index.html for non-blocking parallel load */
 
 @layer base {
   :root {
@@ -146,11 +146,17 @@
   }
 
   .section-padding {
-    @apply py-16 md:py-24 px-4 md:px-8;
+    /* Tighter vertical rhythm on phones, generous on desktop */
+    @apply py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8;
   }
 
   .container-custom {
-    @apply max-w-7xl mx-auto;
+    @apply max-w-7xl mx-auto w-full;
+  }
+
+  /* Respects iOS notch / Android gesture bar at the bottom of the screen */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
 
@@ -169,6 +175,11 @@
 
   .animate-fade-in {
     animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  /* Touch-optimization helper — eliminates 300ms tap delay & double-tap zoom on buttons */
+  .touch-manipulation {
+    touch-action: manipulation;
   }
 
   @keyframes float {
@@ -198,11 +209,11 @@
   }
 
   @keyframes glow-pulse {
-    0%, 100% { 
+    0%, 100% {
       opacity: 0.6;
       transform: translateX(-50%) scale(1);
     }
-    50% { 
+    50% {
       opacity: 1;
       transform: translateX(-50%) scale(1.05);
     }
@@ -213,4 +224,24 @@
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
   }
+}
+
+/* Disable infinite/decorative animations for users who request reduced motion
+   (and as a battery/CPU win on lower-end mobile devices). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Prevent horizontal overflow caused by decorative blurs / off-canvas elements
+   on narrow viewports — common cause of unwanted horizontal scroll on phones. */
+html, body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }

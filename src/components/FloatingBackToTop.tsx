@@ -36,7 +36,8 @@ export const FloatingBackToTop = () => {
           exit={{ scale: 0, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
           onClick={scrollToTop}
-          className="fixed bottom-40 right-6 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-nhis-blue via-nhis-green to-nhis-yellow text-white shadow-lg flex items-center justify-center hover:shadow-xl transition-all group"
+          // Stack above WhatsApp button (which sits at bottom-[5.5rem] on mobile)
+          className="fixed right-4 sm:right-6 bottom-[10rem] lg:bottom-24 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-nhis-blue via-nhis-green to-nhis-yellow text-white shadow-lg flex items-center justify-center hover:shadow-xl transition-all group touch-manipulation"
           whileHover={{ scale: 1.1, y: -2 }}
           whileTap={{ scale: 0.95 }}
           aria-label="Back to top"

@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,27 +9,50 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { DemoAuthProvider } from "@/contexts/DemoAuthContext";
 import { FloatingBackToTop } from "@/components/FloatingBackToTop";
-import { ChatWidget } from "@/components/ChatWidget";
-import HomePage from "./pages/HomePage";
-import MembershipPage from "./pages/MembershipPage";
-import MemberPortalPage from "./pages/MemberPortalPage";
-import ClaimsPaymentPage from "./pages/ClaimsPaymentPage";
-import ProvidersPage from "./pages/ProvidersPage";
-import CredentialingPage from "./pages/CredentialingPage";
-import PrivateInsurancePage from "./pages/PrivateInsurancePage";
-import FAQsPage from "./pages/FAQsPage";
-import DownloadsPage from "./pages/DownloadsPage";
-import ContactPage from "./pages/ContactPage";
-import FacilitiesPage from "./pages/FacilitiesPage";
-import AboutPage from "./pages/AboutPage";
-import NHIAPage from "./pages/NHIAPage";
-import ManagementPage from "./pages/ManagementPage";
-import BoardPage from "./pages/BoardPage";
-import MedicinesListPage from "./pages/MedicinesListPage";
-import NewsPage from "./pages/NewsPage";
-import NotFound from "./pages/NotFound";
+import { Loader2 } from "lucide-react";
 
-const queryClient = new QueryClient();
+// Lightweight, eagerly-loaded landing route — keeps first paint snappy
+import HomePage from "./pages/HomePage";
+
+// All other routes are code-split. They only download when navigated to,
+// dramatically reducing the initial JS bundle on mobile networks.
+const MembershipPage = lazy(() => import("./pages/MembershipPage"));
+const MemberPortalPage = lazy(() => import("./pages/MemberPortalPage"));
+const ClaimsPaymentPage = lazy(() => import("./pages/ClaimsPaymentPage"));
+const ProvidersPage = lazy(() => import("./pages/ProvidersPage"));
+const CredentialingPage = lazy(() => import("./pages/CredentialingPage"));
+const PrivateInsurancePage = lazy(() => import("./pages/PrivateInsurancePage"));
+const FAQsPage = lazy(() => import("./pages/FAQsPage"));
+const DownloadsPage = lazy(() => import("./pages/DownloadsPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const FacilitiesPage = lazy(() => import("./pages/FacilitiesPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const NHIAPage = lazy(() => import("./pages/NHIAPage"));
+const ManagementPage = lazy(() => import("./pages/ManagementPage"));
+const BoardPage = lazy(() => import("./pages/BoardPage"));
+const MedicinesListPage = lazy(() => import("./pages/MedicinesListPage"));
+const NewsPage = lazy(() => import("./pages/NewsPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Chat widget defers loading the AI streaming code until after first paint
+const ChatWidget = lazy(() =>
+  import("@/components/ChatWidget").then((m) => ({ default: m.ChatWidget })),
+);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const RouteFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <Loader2 className="w-8 h-8 animate-spin text-primary" aria-label="Loading page" />
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -39,30 +63,34 @@ const App = () => (
             <Toaster />
             <Sonner />
             <FloatingBackToTop />
-            <ChatWidget />
+            <Suspense fallback={null}>
+              <ChatWidget />
+            </Suspense>
             <BrowserRouter>
               <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/membership" element={<MembershipPage />} />
-                  <Route path="/member-portal" element={<MemberPortalPage />} />
-                  <Route path="/claims-payment" element={<ClaimsPaymentPage />} />
-                  <Route path="/providers" element={<ProvidersPage />} />
-                  <Route path="/credentialing" element={<CredentialingPage />} />
-                  <Route path="/private-insurance" element={<PrivateInsurancePage />} />
-                  <Route path="/faqs" element={<FAQsPage />} />
-                  <Route path="/downloads" element={<DownloadsPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/facilities" element={<FacilitiesPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/nhia" element={<NHIAPage />} />
-                  <Route path="/management" element={<ManagementPage />} />
-                  <Route path="/board" element={<BoardPage />} />
-                  <Route path="/medlist" element={<MedicinesListPage />} />
-                  <Route path="/news" element={<NewsPage />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                <Suspense fallback={<RouteFallback />}>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/membership" element={<MembershipPage />} />
+                    <Route path="/member-portal" element={<MemberPortalPage />} />
+                    <Route path="/claims-payment" element={<ClaimsPaymentPage />} />
+                    <Route path="/providers" element={<ProvidersPage />} />
+                    <Route path="/credentialing" element={<CredentialingPage />} />
+                    <Route path="/private-insurance" element={<PrivateInsurancePage />} />
+                    <Route path="/faqs" element={<FAQsPage />} />
+                    <Route path="/downloads" element={<DownloadsPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/facilities" element={<FacilitiesPage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/nhia" element={<NHIAPage />} />
+                    <Route path="/management" element={<ManagementPage />} />
+                    <Route path="/board" element={<BoardPage />} />
+                    <Route path="/medlist" element={<MedicinesListPage />} />
+                    <Route path="/news" element={<NewsPage />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
               </AnimatePresence>
             </BrowserRouter>
           </TooltipProvider>
