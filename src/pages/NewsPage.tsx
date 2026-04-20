@@ -67,20 +67,17 @@ const NewsPage = () => {
 
   return (
     <PageLayout>
-      <div className="container-custom pt-6">
-        <Breadcrumb items={[{ label: 'News' }]} />
-      </div>
-
-      {/* Hero */}
-      <section className="container-custom pt-4 pb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-nhis-green to-nhis-blue p-8 md:p-12 text-primary-foreground"
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(247,179,43,0.25),transparent_60%)]" />
-          <div className="relative max-w-3xl">
+      {/* Hero with breadcrumb on top */}
+      <section className="relative bg-gradient-to-br from-primary via-nhis-green to-nhis-blue text-primary-foreground overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(247,179,43,0.25),transparent_60%)]" />
+        <div className="container-custom relative pt-8 pb-12 md:pb-16">
+          <Breadcrumb />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mt-6 max-w-3xl"
+          >
             <span className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full text-xs font-semibold mb-4">
               <Newspaper className="w-3.5 h-3.5" />
               Live from nhis.gov.gh
@@ -92,8 +89,8 @@ const NewsPage = () => {
               The latest announcements, programmes, and stories from the
               National Health Insurance Scheme of Ghana, refreshed automatically.
             </p>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       {/* Search + Filters */}
