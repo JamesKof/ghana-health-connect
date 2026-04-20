@@ -156,7 +156,7 @@ async function scrapeAllPages(maxPages = 3): Promise<ScrapedArticle[]> {
   return all;
 }
 
-serve(async (req: Request) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
