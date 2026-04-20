@@ -303,6 +303,30 @@ const NewsPage = () => {
           </>
         )}
       </section>
+
+      {/* Email subscription */}
+      <section className="container-custom pb-16 -mt-4">
+        <div className="rounded-2xl border border-border/60 bg-gradient-to-br from-primary/5 via-card to-nhis-green/5 p-6 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                <Mail className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1">
+                  Never miss an NHIS update
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Get new articles, policy announcements, and important notices delivered to your inbox.
+                </p>
+              </div>
+            </div>
+            <div className="md:max-w-md md:w-full">
+              <NewsSubscribeForm variant="compact" />
+            </div>
+          </div>
+        </div>
+      </section>
     </PageLayout>
   );
 };
