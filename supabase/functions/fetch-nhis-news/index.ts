@@ -340,6 +340,35 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // Generate AI summaries for articles missing them (cap at 8 per run for latency)
+    const { data: needSummary } = await supabase
+      .from("news_articles")
+      .select("id, title, category")
+      .is("summary", null)
+      .limit(8);
+    if (needSummary && needSummary.length > 0) {
+      console.log(`Generating AI summaries for ${needSummary.length} articles`);
+      for (const a of needSummary) {
+        const summary = await generateSummary(a.title, a.category);
+        if (summary) {
+          await supabase.from("news_articles").update({ summary }).eq("id", a.id);
+        }
+      }
+    }
+
+    // Email new articles to confirmed subscribers (articles never emailed before)
+    const { data: toEmail } = await supabase
+      .from("news_articles")
+      .select("id, title, url, category, summary, published_text")
+      .is("emailed_at", null)
+      .order("published_date", { ascending: false, nullsFirst: false })
+      .limit(5);
+    if (toEmail && toEmail.length > 0) {
+      for (const article of toEmail) {
+        await emailArticleToSubscribers(supabase, article);
+      }
+    }
+
     // Return latest articles
     const { data: articles, error: readErr } = await supabase
       .from("news_articles")
