@@ -277,8 +277,12 @@ export const Navbar = () => {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 10, scale: 0.95 }}
                               transition={{ duration: 0.2, ease: 'easeOut' }}
+                              onKeyDown={handleMegaKeyDown}
+                              tabIndex={-1}
+                              role="menu"
+                              aria-label={`${item.name} menu`}
                               className={cn(
-                                "absolute top-full left-1/2 -translate-x-1/2 mt-3 z-[100] bg-background dark:bg-card rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-border overflow-hidden",
+                                "absolute top-full left-1/2 -translate-x-1/2 mt-3 z-[100] bg-background dark:bg-card rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-border overflow-hidden focus:outline-none",
                                 item.name === 'Services' ? "min-w-[580px]" : "min-w-[480px]"
                               )}
                             >
@@ -286,8 +290,40 @@ export const Navbar = () => {
                               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-nhis-blue via-nhis-green to-nhis-yellow" />
                               
                               <div className="p-4 pt-5">
-                                {/* Quick Links Section for Services */}
-                                {item.name === 'Services' && (
+                                {/* Search bar */}
+                                <motion.div
+                                  initial={{ opacity: 0, y: -6 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="relative mb-4"
+                                >
+                                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                                  <input
+                                    ref={megaSearchInputRef}
+                                    type="text"
+                                    value={megaSearch}
+                                    onChange={(e) => { setMegaSearch(e.target.value); setHighlightIndex(0); }}
+                                    placeholder={`Search ${item.name.toLowerCase()}...`}
+                                    aria-label={`Search ${item.name}`}
+                                    className="w-full h-9 pl-9 pr-9 rounded-lg bg-muted/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all"
+                                  />
+                                  {megaSearch && (
+                                    <button
+                                      type="button"
+                                      onClick={() => { setMegaSearch(''); megaSearchInputRef.current?.focus(); }}
+                                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                                      aria-label="Clear search"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                  <p className="text-[10px] text-muted-foreground mt-1.5 px-1">
+                                    Use <kbd className="px-1 py-0.5 rounded bg-muted text-[9px] font-mono">↑↓</kbd> to navigate, <kbd className="px-1 py-0.5 rounded bg-muted text-[9px] font-mono">Enter</kbd> to select, <kbd className="px-1 py-0.5 rounded bg-muted text-[9px] font-mono">Esc</kbd> to close
+                                  </p>
+                                </motion.div>
+
+                                {/* Quick Links Section for Services (hidden when searching) */}
+                                {item.name === 'Services' && !megaSearch && (
                                   <motion.div 
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -329,57 +365,81 @@ export const Navbar = () => {
                                   initial={{ opacity: 0 }}
                                   animate={{ opacity: 1 }}
                                   transition={{ delay: 0.1 }}
-                                  className="flex items-center gap-2 mb-3"
+                                  className="flex items-center justify-between gap-2 mb-3"
                                 >
-                                  <item.icon className="w-4 h-4 text-primary" />
-                                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{item.name}</span>
+                                  <div className="flex items-center gap-2">
+                                    <item.icon className="w-4 h-4 text-primary" />
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                      {megaSearch ? `Results (${filteredItems.length})` : item.name}
+                                    </span>
+                                  </div>
                                 </motion.div>
                                 
-                                <div className="grid grid-cols-2 gap-2">
-                                  {item.dropdownItems?.map((dropItem, idx) => (
-                                    <motion.div
-                                      key={dropItem.name}
-                                      initial={{ opacity: 0, x: -20 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      transition={{ 
-                                        delay: (item.name === 'Services' ? 0.15 : 0.05) + idx * 0.06,
-                                        duration: 0.25,
-                                        ease: [0.25, 0.46, 0.45, 0.94]
-                                      }}
-                                    >
-                                      <Link
-                                        to={dropItem.href}
-                                        onClick={() => setOpenDropdown(null)}
-                                        className="group/item relative flex items-start gap-3 p-3 rounded-xl transition-all duration-300 hover:bg-primary/5"
-                                      >
-                                        <div className={cn(
-                                          "shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
-                                          isActive(dropItem.href) 
-                                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
-                                            : "bg-muted group-hover/item:bg-primary/10 group-hover/item:text-primary group-hover/item:scale-110"
-                                        )}>
-                                          <dropItem.icon className="w-5 h-5" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                          <div className="flex items-center gap-1">
-                                            <span className={cn(
-                                              "font-medium text-sm transition-colors",
-                                              isActive(dropItem.href) ? "text-primary" : "text-foreground group-hover/item:text-primary"
+                                {filteredItems.length === 0 ? (
+                                  <div className="py-8 text-center text-sm text-muted-foreground">
+                                    No results for "<span className="text-foreground font-medium">{megaSearch}</span>"
+                                  </div>
+                                ) : (
+                                  <div className="grid grid-cols-2 gap-2">
+                                    {filteredItems.map((dropItem, idx) => {
+                                      const isHighlighted = idx === highlightIndex;
+                                      return (
+                                        <motion.div
+                                          key={dropItem.name}
+                                          initial={{ opacity: 0, x: -20 }}
+                                          animate={{ opacity: 1, x: 0 }}
+                                          transition={{ 
+                                            delay: (item.name === 'Services' && !megaSearch ? 0.15 : 0.05) + idx * 0.06,
+                                            duration: 0.25,
+                                            ease: [0.25, 0.46, 0.45, 0.94]
+                                          }}
+                                        >
+                                          <Link
+                                            to={dropItem.href}
+                                            onClick={() => setOpenDropdown(null)}
+                                            onMouseEnter={() => setHighlightIndex(idx)}
+                                            role="menuitem"
+                                            aria-current={isHighlighted ? 'true' : undefined}
+                                            className={cn(
+                                              "group/item relative flex items-start gap-3 p-3 rounded-xl transition-all duration-300",
+                                              isHighlighted ? "bg-primary/10 ring-2 ring-primary/30" : "hover:bg-primary/5"
+                                            )}
+                                          >
+                                            <div className={cn(
+                                              "shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
+                                              isActive(dropItem.href) 
+                                                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
+                                                : isHighlighted
+                                                  ? "bg-primary/15 text-primary scale-110"
+                                                  : "bg-muted group-hover/item:bg-primary/10 group-hover/item:text-primary group-hover/item:scale-110"
                                             )}>
-                                              {dropItem.name}
-                                            </span>
-                                            <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300 text-primary" />
-                                          </div>
-                                          {dropItem.description && (
-                                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 group-hover/item:text-muted-foreground/80 transition-colors">
-                                              {dropItem.description}
-                                            </p>
-                                          )}
-                                        </div>
-                                      </Link>
-                                    </motion.div>
-                                  ))}
-                                </div>
+                                              <dropItem.icon className="w-5 h-5" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <div className="flex items-center gap-1">
+                                                <span className={cn(
+                                                  "font-medium text-sm transition-colors",
+                                                  isActive(dropItem.href) || isHighlighted ? "text-primary" : "text-foreground group-hover/item:text-primary"
+                                                )}>
+                                                  {dropItem.name}
+                                                </span>
+                                                <ArrowRight className={cn(
+                                                  "w-3 h-3 transition-all duration-300 text-primary",
+                                                  isHighlighted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0"
+                                                )} />
+                                              </div>
+                                              {dropItem.description && (
+                                                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 group-hover/item:text-muted-foreground/80 transition-colors">
+                                                  {dropItem.description}
+                                                </p>
+                                              )}
+                                            </div>
+                                          </Link>
+                                        </motion.div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
                               </div>
                             </motion.div>
                           )}
