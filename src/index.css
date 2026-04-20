@@ -177,6 +177,11 @@
     animation: fadeIn 0.8s ease-out forwards;
   }
 
+  /* Touch-optimization helper — eliminates 300ms tap delay & double-tap zoom on buttons */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-20px); }
@@ -204,11 +209,11 @@
   }
 
   @keyframes glow-pulse {
-    0%, 100% { 
+    0%, 100% {
       opacity: 0.6;
       transform: translateX(-50%) scale(1);
     }
-    50% { 
+    50% {
       opacity: 1;
       transform: translateX(-50%) scale(1.05);
     }
@@ -219,4 +224,24 @@
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
   }
+}
+
+/* Disable infinite/decorative animations for users who request reduced motion
+   (and as a battery/CPU win on lower-end mobile devices). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Prevent horizontal overflow caused by decorative blurs / off-canvas elements
+   on narrow viewports — common cause of unwanted horizontal scroll on phones. */
+html, body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
