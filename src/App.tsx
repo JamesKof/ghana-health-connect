@@ -25,6 +25,7 @@ import NHIAPage from "./pages/NHIAPage";
 import ManagementPage from "./pages/ManagementPage";
 import BoardPage from "./pages/BoardPage";
 import MedicinesListPage from "./pages/MedicinesListPage";
+import NewsPage from "./pages/NewsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
                   <Route path="/management" element={<ManagementPage />} />
                   <Route path="/board" element={<BoardPage />} />
                   <Route path="/medlist" element={<MedicinesListPage />} />
+                  <Route path="/news" element={<NewsPage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
