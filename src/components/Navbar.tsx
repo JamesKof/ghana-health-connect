@@ -57,6 +57,7 @@ const navItems: NavItem[] = [
     ]
   },
   { name: 'Facilities', href: '/facilities', icon: MapPin },
+  { name: 'News', href: '/news', icon: FileText },
   { name: 'FAQs', href: '/faqs', icon: HelpCircle },
   { name: 'Downloads', href: '/downloads', icon: Download },
   { name: 'Contact', href: '/contact', icon: Mail },
