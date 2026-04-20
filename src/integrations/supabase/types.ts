@@ -88,6 +88,51 @@ export type Database = {
           },
         ]
       }
+      news_articles: {
+        Row: {
+          category: string
+          created_at: string
+          fetched_at: string
+          id: string
+          image_url: string | null
+          published_date: string | null
+          published_text: string | null
+          source: string
+          summary: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          published_date?: string | null
+          published_text?: string | null
+          source?: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          published_date?: string | null
+          published_text?: string | null
+          source?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
