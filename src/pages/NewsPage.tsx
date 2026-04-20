@@ -227,9 +227,14 @@ const NewsPage = () => {
                     </span>
                     <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary transition-colors" />
                   </div>
-                  <h3 className="font-display font-semibold text-foreground line-clamp-3 mb-3 group-hover:text-primary transition-colors flex-1">
+                  <h3 className="font-display font-semibold text-foreground line-clamp-3 mb-2 group-hover:text-primary transition-colors">
                     {article.title}
                   </h3>
+                  {article.summary && (
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">
+                      {article.summary}
+                    </p>
+                  )}
                   <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto pt-3 border-t border-border">
                     <span className="inline-flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5" />
