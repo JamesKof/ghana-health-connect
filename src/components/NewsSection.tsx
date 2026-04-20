@@ -1,8 +1,9 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Calendar, Newspaper, Loader2 } from 'lucide-react';
+import { ArrowRight, Calendar, Newspaper, Loader2, Mail } from 'lucide-react';
 import { useNews, type NewsArticle } from '@/hooks/useNews';
+import { NewsSubscribeForm } from './NewsSubscribeForm';
 
 const formatDate = (article: NewsArticle) => {
   if (article.published_text) return article.published_text;
