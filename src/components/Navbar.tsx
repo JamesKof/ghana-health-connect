@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef, type KeyboardEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin, Phone, Info, Building2, Briefcase, Crown, Pill, ArrowRight, type LucideIcon } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, Home, Users, FileText, CreditCard, Hospital, Award, Shield, HelpCircle, Download, ChevronDown, Mail, Search, UserCircle, MapPin, Phone, Info, Building2, Briefcase, Crown, Pill, ArrowRight, X, type LucideIcon } from 'lucide-react';
 import { NHISLogo } from './NHISLogo';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageToggle } from './LanguageToggle';
@@ -74,7 +74,68 @@ export const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const [megaSearch, setMegaSearch] = useState('');
+  const [highlightIndex, setHighlightIndex] = useState(0);
+  const megaSearchInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Filter dropdown items based on search query
+  const filteredItems = useMemo(() => {
+    if (!openDropdown) return [];
+    const item = navItems.find((n) => n.name === openDropdown);
+    if (!item?.dropdownItems) return [];
+    const q = megaSearch.trim().toLowerCase();
+    if (!q) return item.dropdownItems;
+    return item.dropdownItems.filter(
+      (d) => d.name.toLowerCase().includes(q) || d.description?.toLowerCase().includes(q)
+    );
+  }, [openDropdown, megaSearch]);
+
+  // Reset search & highlight when dropdown changes; focus search input
+  useEffect(() => {
+    setMegaSearch('');
+    setHighlightIndex(0);
+    if (openDropdown) {
+      // small delay so input is mounted
+      const t = setTimeout(() => megaSearchInputRef.current?.focus(), 50);
+      return () => clearTimeout(t);
+    }
+  }, [openDropdown]);
+
+  // Clamp highlight when results change
+  useEffect(() => {
+    if (highlightIndex >= filteredItems.length) {
+      setHighlightIndex(Math.max(0, filteredItems.length - 1));
+    }
+  }, [filteredItems, highlightIndex]);
+
+  const handleMegaKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!openDropdown) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightIndex((i) => (filteredItems.length ? (i + 1) % filteredItems.length : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightIndex((i) => (filteredItems.length ? (i - 1 + filteredItems.length) % filteredItems.length : 0));
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setHighlightIndex((i) => Math.min(filteredItems.length - 1, i + 1));
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setHighlightIndex((i) => Math.max(0, i - 1));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const target = filteredItems[highlightIndex];
+      if (target) {
+        setOpenDropdown(null);
+        navigate(target.href);
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setOpenDropdown(null);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
