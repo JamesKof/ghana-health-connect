@@ -111,6 +111,11 @@ export const NewsSection = () => {
                   <h3 className="font-display text-2xl md:text-3xl font-bold text-white mb-3 leading-tight group-hover:translate-x-1 transition-transform">
                     {hero.title}
                   </h3>
+                  {hero.summary && (
+                    <p className="text-white/85 text-sm md:text-base mb-4 line-clamp-2 max-w-xl">
+                      {hero.summary}
+                    </p>
+                  )}
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     <div className="flex items-center gap-2 text-white/80 text-sm">
                       <Calendar className="w-4 h-4" />
