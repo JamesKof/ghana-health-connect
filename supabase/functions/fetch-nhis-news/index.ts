@@ -176,18 +176,23 @@ Deno.serve(async (req: Request) => {
     const url = new URL(req.url);
     const forceRefresh = url.searchParams.get("refresh") === "true";
 
-    // Check cache freshness — look at most recent fetched_at
+    // Check cache freshness — only consider cache valid if we have articles
     let useCache = false;
     if (!forceRefresh) {
-      const { data: latest } = await supabase
+      const { count } = await supabase
         .from("news_articles")
-        .select("fetched_at")
-        .order("fetched_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (latest?.fetched_at) {
-        const age = Date.now() - new Date(latest.fetched_at).getTime();
-        if (age < CACHE_TTL_MS) useCache = true;
+        .select("*", { count: "exact", head: true });
+      if ((count ?? 0) > 0) {
+        const { data: latest } = await supabase
+          .from("news_articles")
+          .select("fetched_at")
+          .order("fetched_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (latest?.fetched_at) {
+          const age = Date.now() - new Date(latest.fetched_at).getTime();
+          if (age < CACHE_TTL_MS) useCache = true;
+        }
       }
     }
 
