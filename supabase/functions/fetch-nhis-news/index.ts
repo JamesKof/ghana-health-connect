@@ -21,8 +21,12 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 const NEWS_BASE = "https://www.nhis.gov.gh";
+const APP_URL = "https://nhis-nextgen-gh.lovable.app";
+const FROM_EMAIL = "NHIS Ghana <onboarding@resend.dev>";
 
 interface ScrapedArticle {
   title: string;
