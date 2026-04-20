@@ -134,8 +134,11 @@ async function scrapeAllPages(maxPages = 3): Promise<ScrapedArticle[]> {
       const res = await fetch(url, {
         headers: {
           "User-Agent":
-            "Mozilla/5.0 (compatible; NHIS-Lovable-Bot/1.0; +https://lovable.dev)",
-          "Accept": "text/html,application/xhtml+xml",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+          "Accept":
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Cache-Control": "no-cache",
         },
       });
       if (!res.ok) {
@@ -173,18 +176,23 @@ Deno.serve(async (req: Request) => {
     const url = new URL(req.url);
     const forceRefresh = url.searchParams.get("refresh") === "true";
 
-    // Check cache freshness — look at most recent fetched_at
+    // Check cache freshness — only consider cache valid if we have articles
     let useCache = false;
     if (!forceRefresh) {
-      const { data: latest } = await supabase
+      const { count } = await supabase
         .from("news_articles")
-        .select("fetched_at")
-        .order("fetched_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (latest?.fetched_at) {
-        const age = Date.now() - new Date(latest.fetched_at).getTime();
-        if (age < CACHE_TTL_MS) useCache = true;
+        .select("*", { count: "exact", head: true });
+      if ((count ?? 0) > 0) {
+        const { data: latest } = await supabase
+          .from("news_articles")
+          .select("fetched_at")
+          .order("fetched_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (latest?.fetched_at) {
+          const age = Date.now() - new Date(latest.fetched_at).getTime();
+          if (age < CACHE_TTL_MS) useCache = true;
+        }
       }
     }
 
