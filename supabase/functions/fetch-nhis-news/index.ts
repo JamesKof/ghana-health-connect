@@ -21,8 +21,12 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 const NEWS_BASE = "https://www.nhis.gov.gh";
+const APP_URL = "https://nhis-nextgen-gh.lovable.app";
+const FROM_EMAIL = "NHIS Ghana <onboarding@resend.dev>";
 
 interface ScrapedArticle {
   title: string;
@@ -159,6 +163,122 @@ async function scrapeAllPages(maxPages = 3): Promise<ScrapedArticle[]> {
   return all;
 }
 
+// Generate a 1-sentence summary using Lovable AI
+async function generateSummary(title: string, category: string): Promise<string | null> {
+  if (!LOVABLE_API_KEY) return null;
+  try {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You write a single concise preview sentence (max 22 words) describing a news article from Ghana's National Health Insurance Scheme (NHIS). Write in plain, neutral journalistic style. No quotes, no emoji, no hashtags. Output only the sentence.",
+          },
+          {
+            role: "user",
+            content: `Headline: ${title}\nCategory: ${category}\n\nWrite the preview sentence:`,
+          },
+        ],
+      }),
+    });
+    if (!res.ok) {
+      console.warn("AI summary failed:", res.status, await res.text());
+      return null;
+    }
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content?.trim();
+    if (!text) return null;
+    // Strip surrounding quotes if model added them
+    return text.replace(/^["'`]|["'`]$/g, "").slice(0, 280);
+  } catch (err) {
+    console.warn("AI summary error:", err);
+    return null;
+  }
+}
+
+// Email a single new article to all confirmed subscribers
+async function emailArticleToSubscribers(
+  supabase: any,
+  article: { id: string; title: string; url: string; category: string; summary: string | null; published_text: string | null },
+) {
+  if (!RESEND_API_KEY) {
+    console.log("RESEND_API_KEY not set; skipping subscriber emails");
+    return;
+  }
+  const { data: subs } = await supabase
+    .from("news_subscribers")
+    .select("email, unsubscribe_token")
+    .eq("status", "confirmed");
+
+  if (!subs || subs.length === 0) return;
+  console.log(`Emailing article "${article.title}" to ${subs.length} subscribers`);
+
+  for (const sub of subs) {
+    const unsubUrl = `${SUPABASE_URL}/functions/v1/unsubscribe-news?token=${sub.unsubscribe_token}`;
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1a1a1a">
+        <div style="text-align:center;padding:16px 0;border-bottom:3px solid #0066B3">
+          <h1 style="color:#0066B3;margin:0;font-size:22px">NHIS Ghana News</h1>
+        </div>
+        <div style="background:#f5f7fa;padding:6px 12px;border-radius:4px;display:inline-block;margin-top:24px;font-size:12px;color:#0066B3;font-weight:600;text-transform:uppercase">${article.category}</div>
+        <h2 style="color:#1a1a1a;margin:12px 0 8px;font-size:20px;line-height:1.3">${escapeHtml(article.title)}</h2>
+        ${article.published_text ? `<p style="color:#888;font-size:13px;margin:0 0 16px">${escapeHtml(article.published_text)}</p>` : ""}
+        ${article.summary ? `<p style="color:#444;line-height:1.6;font-size:15px">${escapeHtml(article.summary)}</p>` : ""}
+        <p style="text-align:center;margin:32px 0">
+          <a href="${article.url}" style="background:#0066B3;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block">
+            Read full article
+          </a>
+        </p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0" />
+        <p style="color:#999;font-size:12px;text-align:center">
+          You're receiving this because you subscribed to NHIS Ghana news updates.<br/>
+          <a href="${unsubUrl}" style="color:#999">Unsubscribe</a>
+        </p>
+      </div>
+    `;
+    try {
+      const r = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: FROM_EMAIL,
+          to: [sub.email],
+          subject: `NHIS: ${article.title}`,
+          html,
+        }),
+      });
+      if (!r.ok) console.warn("Resend send failed:", r.status, await r.text());
+    } catch (err) {
+      console.warn("Resend error:", err);
+    }
+  }
+
+  // Mark article as emailed
+  await supabase
+    .from("news_articles")
+    .update({ emailed_at: new Date().toISOString() })
+    .eq("id", article.id);
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -217,6 +337,35 @@ Deno.serve(async (req: Request) => {
       } else {
         // Scrape returned nothing — fall back to whatever is cached
         cached = true;
+      }
+    }
+
+    // Generate AI summaries for articles missing them (cap at 8 per run for latency)
+    const { data: needSummary } = await supabase
+      .from("news_articles")
+      .select("id, title, category")
+      .is("summary", null)
+      .limit(8);
+    if (needSummary && needSummary.length > 0) {
+      console.log(`Generating AI summaries for ${needSummary.length} articles`);
+      for (const a of needSummary) {
+        const summary = await generateSummary(a.title, a.category);
+        if (summary) {
+          await supabase.from("news_articles").update({ summary }).eq("id", a.id);
+        }
+      }
+    }
+
+    // Email new articles to confirmed subscribers (articles never emailed before)
+    const { data: toEmail } = await supabase
+      .from("news_articles")
+      .select("id, title, url, category, summary, published_text")
+      .is("emailed_at", null)
+      .order("published_date", { ascending: false, nullsFirst: false })
+      .limit(5);
+    if (toEmail && toEmail.length > 0) {
+      for (const article of toEmail) {
+        await emailArticleToSubscribers(supabase, article);
       }
     }
 

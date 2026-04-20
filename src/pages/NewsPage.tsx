@@ -1,8 +1,9 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Calendar, ArrowRight, Newspaper, Filter, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Search, Calendar, ArrowRight, Newspaper, Filter, Loader2, AlertCircle, ExternalLink, Mail } from 'lucide-react';
 import { PageLayout } from '@/components/PageLayout';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { NewsSubscribeForm } from '@/components/NewsSubscribeForm';
 import { useNews, type NewsArticle } from '@/hooks/useNews';
 import { cn } from '@/lib/utils';
 
@@ -226,9 +227,14 @@ const NewsPage = () => {
                     </span>
                     <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary transition-colors" />
                   </div>
-                  <h3 className="font-display font-semibold text-foreground line-clamp-3 mb-3 group-hover:text-primary transition-colors flex-1">
+                  <h3 className="font-display font-semibold text-foreground line-clamp-3 mb-2 group-hover:text-primary transition-colors">
                     {article.title}
                   </h3>
+                  {article.summary && (
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">
+                      {article.summary}
+                    </p>
+                  )}
                   <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto pt-3 border-t border-border">
                     <span className="inline-flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5" />
@@ -296,6 +302,30 @@ const NewsPage = () => {
             </p>
           </>
         )}
+      </section>
+
+      {/* Email subscription */}
+      <section className="container-custom pb-16 -mt-4">
+        <div className="rounded-2xl border border-border/60 bg-gradient-to-br from-primary/5 via-card to-nhis-green/5 p-6 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                <Mail className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="font-display text-xl md:text-2xl font-bold text-foreground mb-1">
+                  Never miss an NHIS update
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Get new articles, policy announcements, and important notices delivered to your inbox.
+                </p>
+              </div>
+            </div>
+            <div className="md:max-w-md md:w-full">
+              <NewsSubscribeForm variant="compact" />
+            </div>
+          </div>
+        </div>
       </section>
     </PageLayout>
   );

@@ -1,8 +1,9 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Calendar, Newspaper, Loader2 } from 'lucide-react';
+import { ArrowRight, Calendar, Newspaper, Loader2, Mail } from 'lucide-react';
 import { useNews, type NewsArticle } from '@/hooks/useNews';
+import { NewsSubscribeForm } from './NewsSubscribeForm';
 
 const formatDate = (article: NewsArticle) => {
   if (article.published_text) return article.published_text;
@@ -110,6 +111,11 @@ export const NewsSection = () => {
                   <h3 className="font-display text-2xl md:text-3xl font-bold text-white mb-3 leading-tight group-hover:translate-x-1 transition-transform">
                     {hero.title}
                   </h3>
+                  {hero.summary && (
+                    <p className="text-white/85 text-sm md:text-base mb-4 line-clamp-2 max-w-xl">
+                      {hero.summary}
+                    </p>
+                  )}
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     <div className="flex items-center gap-2 text-white/80 text-sm">
                       <Calendar className="w-4 h-4" />
@@ -145,9 +151,14 @@ export const NewsSection = () => {
                         {formatDate(news)}
                       </span>
                     </div>
-                    <h3 className="font-display font-semibold text-foreground mb-3 line-clamp-3 group-hover:text-primary transition-colors">
+                    <h3 className="font-display font-semibold text-foreground mb-2 line-clamp-3 group-hover:text-primary transition-colors">
                       {news.title}
                     </h3>
+                    {news.summary && (
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                        {news.summary}
+                      </p>
+                    )}
                   </div>
                   <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm mt-2">
                     Read More
@@ -192,6 +203,35 @@ export const NewsSection = () => {
               </motion.div>
             )}
           </>
+        )}
+
+        {/* Email subscription CTA */}
+        {!isLoading && !isError && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mt-12 rounded-2xl border border-border/50 bg-gradient-to-br from-primary/5 via-card to-nhis-green/5 p-6 md:p-8"
+          >
+            <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex items-start gap-4 flex-1">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-bold text-foreground mb-1">
+                    Get NHIS news in your inbox
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Subscribe to receive new announcements, policies, and updates as soon as they're published.
+                  </p>
+                </div>
+              </div>
+              <div className="md:max-w-md md:w-full">
+                <NewsSubscribeForm variant="compact" />
+              </div>
+            </div>
+          </motion.div>
         )}
       </div>
     </section>

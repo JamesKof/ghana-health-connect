@@ -11,3 +11,15 @@ verify_jwt = false
 
 [functions.get-mapbox-directions]
 verify_jwt = false
+
+[functions.fetch-nhis-news]
+verify_jwt = false
+
+[functions.subscribe-news]
+verify_jwt = false
+
+[functions.confirm-news-subscription]
+verify_jwt = false
+
+[functions.unsubscribe-news]
+verify_jwt = false
